@@ -327,7 +327,7 @@
                     <a href="/archives/#2024">
                         
                             <span class="year">2024</span>
-                            <span class="count">2</span>
+                            <span class="count">1</span>
                         
                     </a> 
                 </div>
@@ -456,7 +456,7 @@
 
         <div class="section-card">
             <div class="section-details">
-                <h3 class="section-count">7 个页面</h3>
+                <h3 class="section-count">6 个页面</h3>
                 <h1 class="section-term">Posts</h1>
                 
             </div>
@@ -464,26 +464,6 @@
     </header>
     
     <section class="article-list--compact">
-        
-            <article>
-    <a href="/p/markdown-syntax-guide/">
-        <div class="article-details">
-            <h2 class="article-title">Markdown Syntax Guide</h2>
-            <footer class="article-time">
-                <time datetime='2019-03-11T00:00:00Z'>Mar 11, 2019</time>
-            </footer>
-        </div>
-            <div class="article-image">
-                <img src="/p/markdown-syntax-guide/pawel-czerwinski-8uZPynIu-rQ-unsplash_hu6307248181568134095.jpg" 
-                        width="120"
-                        height="120" 
-                        alt="Markdown Syntax Guide"
-                        loading="lazy">
-                
-            </div>
-        
-    </a>
-</article>
         
             <article>
     <a href="/p/placeholder-text/">
@@ -516,6 +496,26 @@
     </a>
 </article>
         
+            <article>
+    <a href="/p/emoji-support/">
+        <div class="article-details">
+            <h2 class="article-title">Emoji Support</h2>
+            <footer class="article-time">
+                <time datetime='2019-03-05T00:00:00Z'>Mar 05, 2019</time>
+            </footer>
+        </div>
+            <div class="article-image">
+                <img src="/p/emoji-support/the-creative-exchange-d2zvqp3fpro-unsplash_hu5876398126655421130.jpg" 
+                        width="120"
+                        height="120" 
+                        alt="Emoji Support"
+                        loading="lazy">
+                
+            </div>
+        
+    </a>
+</article>
+        
     </section>
     <nav class='pagination'>
         
@@ -528,10 +528,6 @@
             
             
                 <span class='page-link current'>2</span>
-                
-            
-            
-                    <a class='page-link' href='/post/page/3/'>3</a>
                 
             
     </nav>
@@ -568,6 +564,49 @@
         document.head.appendChild(customFont);
     }());
 </script>
-<script src="https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+<script>
+const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+const cssPath = "https://1878247293.github.io/waifu/waifu.css"
+
+function loadExternalResource(url, type) {
+	return new Promise((resolve, reject) => {
+		let tag;
+
+		if (type === "css") {
+			tag = document.createElement("link");
+			tag.rel = "stylesheet";
+			tag.href = url;
+		}
+		else if (type === "js") {
+			tag = document.createElement("script");
+			tag.src = url;
+		}
+		if (tag) {
+			tag.onload = () => resolve(url);
+			tag.onerror = () => reject(url);
+			document.head.appendChild(tag);
+		}
+	});
+}
+
+
+if (screen.width >= 768) {
+	Promise.all([
+		loadExternalResource(cssPath, "css"),
+		loadExternalResource(live2d_path + "live2d.min.js", "js"),
+		loadExternalResource(live2d_path + "waifu-tips.js", "js")
+	]).then(() => {
+		
+		initWidget({
+			waifuPath: live2d_path + "waifu-tips.json",
+			
+			cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+			tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+		});
+	});
+}
+
+</script>
     </body>
 </html>
