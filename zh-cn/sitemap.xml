@@ -3,7 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://1878247293.github.io/</loc>
-    <lastmod>2024-11-10T20:50:00+08:00</lastmod>
+    <lastmod>2024-11-10T22:26:00+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -20,11 +20,8 @@
                 href="https://1878247293.github.io/"
                 />
   </url><url>
-    <loc>https://1878247293.github.io/p/java%E8%BF%9C%E7%A8%8B%E9%93%BE%E6%8E%A5krb5/</loc>
-    <lastmod>2024-11-10T20:50:00+08:00</lastmod>
-  </url><url>
     <loc>https://1878247293.github.io/post/</loc>
-    <lastmod>2024-11-10T20:50:00+08:00</lastmod>
+    <lastmod>2024-11-10T22:26:00+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -40,6 +37,12 @@
                 hreflang="zh-cn"
                 href="https://1878247293.github.io/post/"
                 />
+  </url><url>
+    <loc>https://1878247293.github.io/p/%E5%9B%9E%E6%94%B6%E7%AB%99%E6%97%A0%E6%B3%95%E6%94%BE%E5%85%A5%E6%96%87%E4%BB%B6/</loc>
+    <lastmod>2024-11-10T22:26:00+08:00</lastmod>
+  </url><url>
+    <loc>https://1878247293.github.io/p/java%E8%BF%9C%E7%A8%8B%E9%93%BE%E6%8E%A5krb5/</loc>
+    <lastmod>2024-11-10T20:50:00+08:00</lastmod>
   </url><url>
     <loc>https://1878247293.github.io/categories/</loc>
     <lastmod>2020-09-09T00:00:00+00:00</lastmod>
