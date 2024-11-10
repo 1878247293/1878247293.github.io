@@ -66,14 +66,18 @@
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;设置TGT的有效时间时，这里通过创建临时文件的方式，但却存在补充下加载配置的问题。最后查阅了多天的资料后，以及不断的尝试，发现的解决的方法（jaas.conf）&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;C:%5cUsers%5cHUAWEI%5cDesktop%5ctest1%5chugo_extended_0.131.0_windows-amd64%5cdev%5ccontent%5cpost%5cjavakrb5%5c1111.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://1878247293.github.io/p/java%E8%BF%9C%E7%A8%8B%E9%93%BE%E6%8E%A5krb5/1111.png&#34;
+	width=&#34;133&#34;
+	height=&#34;182&#34;
+	srcset=&#34;https://1878247293.github.io/p/java%E8%BF%9C%E7%A8%8B%E9%93%BE%E6%8E%A5krb5/1111_hu8141455730399125206.png 480w, https://1878247293.github.io/p/java%E8%BF%9C%E7%A8%8B%E9%93%BE%E6%8E%A5krb5/1111_hu2990185252451181051.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;这是一个演示&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;73&#34;
+		data-flex-basis=&#34;175px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;/li&gt;
