@@ -10,7 +10,7 @@
 <meta property='og:description' content="演示说明">
 <meta property='og:url' content='https://1878247293.github.io/tags/'>
 <meta property='og:site_name' content='陈嘉翔个人博客'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2024-11-10T22:26:00&#43;08:00 '/>
+<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2024-11-11T15:24:00&#43;08:00 '/>
 <meta name="twitter:title" content="Tags">
 <meta name="twitter:description" content="演示说明"><link rel="alternate" type="application/rss&#43;xml" href="https://1878247293.github.io/tags/index.xml">
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -327,7 +327,7 @@
                     <a href="/archives/#2024">
                         
                             <span class="year">2024</span>
-                            <span class="count">2</span>
+                            <span class="count">5</span>
                         
                     </a> 
                 </div>
@@ -528,6 +528,29 @@
         document.head.appendChild(customFont);
     }());
 </script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<div id="aplayer"></div>
+
+<script>
+	const home = "https://1878247293.github.io/"
+	const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+	
+    audio: [{
+        name: '天下有情人',
+        artist: '周华健',
+        url: home+'music/天下有情人-周华健/song.mp3',
+        cover: home+'music/天下有情人-周华健/cover.jpg',
+		 
+    },
+	{
+		
+	}]
+});
+</script>
+
 <script>
 const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
 
