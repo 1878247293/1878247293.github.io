@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>陈嘉翔个人博客</title>
+        <title>明天再见个人博客</title>
         <link>https://1878247293.github.io/</link>
-        <description>Recent content on 陈嘉翔个人博客</description>
+        <description>Recent content on 明天再见个人博客</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <copyright>陈嘉翔</copyright><atom:link href="https://1878247293.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <copyright>明天再见</copyright><atom:link href="https://1878247293.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>外卖订餐系统-（三）</title>
         <link>https://1878247293.github.io/p/%E5%A4%96%E5%8D%96%E8%AE%A2%E9%A4%90%E7%B3%BB%E7%BB%9F-%E4%B8%89/</link>
         <pubDate>Mon, 11 Nov 2024 15:24:00 +0800</pubDate>
