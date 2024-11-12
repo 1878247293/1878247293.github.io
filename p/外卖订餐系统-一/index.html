@@ -10,7 +10,7 @@
 <meta property='og:description' content="一. 项目描述\n\u200b\t本项目用于数据库实验课选做项目的大作业，基于python实现外卖订餐系统\n二. 代码讲解：\n1 2 3 4 5 6 7 from flask import Flask, render_template, request, redirect, url_for, flash from werkzeug.utils import secure_filename import pymysql import os import argparse import sys import importlib 代码引入了 Flask（用于创建 Web 应用）、render_template（渲染 HTML 页面）、request（处理请求）、redirect 和 url_for（页面跳转）、flash（闪现消息）、secure_filename（用于安全保存上传的文件名），以及 pymysql（用于连接和操作 MySQL 数据库）。\n">
 <meta property='og:url' content='https://1878247293.github.io/p/%E5%A4%96%E5%8D%96%E8%AE%A2%E9%A4%90%E7%B3%BB%E7%BB%9F-%E4%B8%80/'>
 <meta property='og:site_name' content='明天再见个人博客'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-11T14:22:00&#43;08:00'/><meta property='article:modified_time' content='2024-11-12T16:23:23&#43;00:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-11T14:22:00&#43;08:00'/><meta property='article:modified_time' content='2024-11-12T17:42:00&#43;00:00'/>
 <meta name="twitter:title" content="外卖订餐系统-（一）">
 <meta name="twitter:description" content="一. 项目描述\n\u200b\t本项目用于数据库实验课选做项目的大作业，基于python实现外卖订餐系统\n二. 代码讲解：\n1 2 3 4 5 6 7 from flask import Flask, render_template, request, redirect, url_for, flash from werkzeug.utils import secure_filename import pymysql import os import argparse import sys import importlib 代码引入了 Flask（用于创建 Web 应用）、render_template（渲染 HTML 页面）、request（处理请求）、redirect 和 url_for（页面跳转）、flash（闪现消息）、secure_filename（用于安全保存上传的文件名），以及 pymysql（用于连接和操作 MySQL 数据库）。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -305,7 +305,7 @@
 
 
                 <time>
-                    Nov 12, 2024 16:23 UTC
+                    Nov 12, 2024 17:42 UTC
                 </time>
             </div>
             <div>
@@ -474,7 +474,7 @@
 
 
         <span>
-            最后更新于 Nov 12, 2024 16:23 UTC
+            最后更新于 Nov 12, 2024 17:42 UTC
         </span>
     </section></footer>
 
@@ -705,6 +705,8 @@
 const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
 
 const cssPath = "https://1878247293.github.io/waifu/waifu.css"
+const waifujosnPath = "https://1878247293.github.io/waifu/waifu-tips.json"
+const live2dPath = "https://1878247293.github.io/waifu/live2d.min.js"
 
 function loadExternalResource(url, type) {
 	return new Promise((resolve, reject) => {
@@ -731,19 +733,63 @@ function loadExternalResource(url, type) {
 if (screen.width >= 768) {
 	Promise.all([
 		loadExternalResource(cssPath, "css"),
-		loadExternalResource(live2d_path + "live2d.min.js", "js"),
+		loadExternalResource(live2dPath, "js"),
 		loadExternalResource(live2d_path + "waifu-tips.js", "js")
 	]).then(() => {
 		
 		initWidget({
-			waifuPath: live2d_path + "waifu-tips.json",
+			waifuPath: waifujosnPath,
 			
 			cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
 			tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
 		});
+		initWaifuMouseEvent();
 	});
 }
-
+function initWaifuMouseEvent() {
+        const waifu = document.getElementById("waifu");
+        let isDown = false;
+        let waifuLeft;
+        let mouseLeft;
+        let waifuTop;
+        let mouseTop;
+        
+        waifu.onmousedown = function (e) {
+            isDown = true;
+            
+            waifuLeft = waifu.offsetLeft;
+            mouseLeft = e.clientX;
+            
+            waifuTop = waifu.offsetTop;
+            mouseTop = e.clientY;
+        }
+        
+        window.onmousemove = function (e) {
+            if (!isDown) {
+                return;
+            }
+            
+            let currentLeft = waifuLeft + (e.clientX - mouseLeft);
+            if (currentLeft < 0) {
+                currentLeft = 0;
+            } else if (currentLeft > window.innerWidth - 300) {
+                currentLeft = window.innerWidth - 300;
+            }
+            waifu.style.left = currentLeft  + "px";
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+        
+        window.onmouseup = function (e) {
+            isDown = false;
+        }
+    }
 </script>
 
 

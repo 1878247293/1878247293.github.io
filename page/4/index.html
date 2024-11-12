@@ -11,7 +11,7 @@
 <meta property='og:description' content="演示说明">
 <meta property='og:url' content='https://1878247293.github.io/'>
 <meta property='og:site_name' content='明天再见个人博客'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2024-11-12T16:23:23&#43;00:00 '/>
+<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2024-11-12T17:42:00&#43;00:00 '/>
 <meta name="twitter:title" content="明天再见个人博客">
 <meta name="twitter:description" content="演示说明"><link rel="alternate" type="application/rss&#43;xml" href="https://1878247293.github.io/index.xml">
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -636,6 +636,8 @@
 const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
 
 const cssPath = "https://1878247293.github.io/waifu/waifu.css"
+const waifujosnPath = "https://1878247293.github.io/waifu/waifu-tips.json"
+const live2dPath = "https://1878247293.github.io/waifu/live2d.min.js"
 
 function loadExternalResource(url, type) {
 	return new Promise((resolve, reject) => {
@@ -662,19 +664,63 @@ function loadExternalResource(url, type) {
 if (screen.width >= 768) {
 	Promise.all([
 		loadExternalResource(cssPath, "css"),
-		loadExternalResource(live2d_path + "live2d.min.js", "js"),
+		loadExternalResource(live2dPath, "js"),
 		loadExternalResource(live2d_path + "waifu-tips.js", "js")
 	]).then(() => {
 		
 		initWidget({
-			waifuPath: live2d_path + "waifu-tips.json",
+			waifuPath: waifujosnPath,
 			
 			cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
 			tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
 		});
+		initWaifuMouseEvent();
 	});
 }
-
+function initWaifuMouseEvent() {
+        const waifu = document.getElementById("waifu");
+        let isDown = false;
+        let waifuLeft;
+        let mouseLeft;
+        let waifuTop;
+        let mouseTop;
+        
+        waifu.onmousedown = function (e) {
+            isDown = true;
+            
+            waifuLeft = waifu.offsetLeft;
+            mouseLeft = e.clientX;
+            
+            waifuTop = waifu.offsetTop;
+            mouseTop = e.clientY;
+        }
+        
+        window.onmousemove = function (e) {
+            if (!isDown) {
+                return;
+            }
+            
+            let currentLeft = waifuLeft + (e.clientX - mouseLeft);
+            if (currentLeft < 0) {
+                currentLeft = 0;
+            } else if (currentLeft > window.innerWidth - 300) {
+                currentLeft = window.innerWidth - 300;
+            }
+            waifu.style.left = currentLeft  + "px";
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+        
+        window.onmouseup = function (e) {
+            isDown = false;
+        }
+    }
 </script>
 
 
