@@ -10,7 +10,7 @@
 <meta property='og:description' content="一. 本次讲解\n\u200b\n二. 代码讲解：\n\u200b\t1. 管理与页面历史相关\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 import flask from flask import Blueprint import db # 创建一个名为 &#39;page_history&#39; 的 Blueprint，负责管理与页面历史相关的路由 page_history = Blueprint(&#39;page_history&#39;, __name__) # 定义一个路由，当访问路径为 &#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39; 时，调用 history 函数 @page_history.route(&#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39;) def history(gid, sel, buy): &#34;&#34;&#34; 渲染历史页面模板 :param gid: 商品ID :param sel: 卖家ID :param buy: 买家ID :return: 渲染历史页面模板 &#34;&#34;&#34; return flask.render_template(&#39;./static/templates/history.html&#39;) # 渲染指定的 HTML 模板 \u200b\t2. 处理登录页面相关\n">
 <meta property='og:url' content='https://1878247293.github.io/p/%E4%BA%8C%E6%89%8B%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F-%E4%BA%8C/'>
 <meta property='og:site_name' content='明天再见个人博客'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-11T23:44:00&#43;08:00'/><meta property='article:modified_time' content='2025-03-21T16:40:11&#43;00:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-11T23:44:00&#43;08:00'/><meta property='article:modified_time' content='2025-03-21T16:47:50&#43;00:00'/>
 <meta name="twitter:title" content="二手交易系统-（二）">
 <meta name="twitter:description" content="一. 本次讲解\n\u200b\n二. 代码讲解：\n\u200b\t1. 管理与页面历史相关\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 import flask from flask import Blueprint import db # 创建一个名为 &#39;page_history&#39; 的 Blueprint，负责管理与页面历史相关的路由 page_history = Blueprint(&#39;page_history&#39;, __name__) # 定义一个路由，当访问路径为 &#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39; 时，调用 history 函数 @page_history.route(&#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39;) def history(gid, sel, buy): &#34;&#34;&#34; 渲染历史页面模板 :param gid: 商品ID :param sel: 卖家ID :param buy: 买家ID :return: 渲染历史页面模板 &#34;&#34;&#34; return flask.render_template(&#39;./static/templates/history.html&#39;) # 渲染指定的 HTML 模板 \u200b\t2. 处理登录页面相关\n">
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -1288,7 +1288,7 @@
 
 
         <span>
-            最后更新于 Mar 21, 2025 16:40 UTC
+            最后更新于 Mar 21, 2025 16:47 UTC
         </span>
     </section></footer>
 

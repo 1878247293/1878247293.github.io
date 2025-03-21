@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="1.转到此处 在您的账户下创建新存储库。选择一个名称（例如 ），然后选择 Private 作为仓库可见性级别。bustub-private\n2.在开发计算机上，创建公有 BusTub 存储库的裸克隆：\n">
-<title>cmu15445环境搭建以及使用</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="一. 实验目的：\n\u200b\t蒙特卡洛算法模拟实现三门问题\n二.问题背景：\n\u200b\t三门问题（Monty Hall Problem）是一道经典的概率问题，描述如下：\n">
+<title>蒙特卡洛算法模拟实现三门问题</title>
 
-<link rel='canonical' href='https://1878247293.github.io/p/cmu15445%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/'>
+<link rel='canonical' href='https://1878247293.github.io/p/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%AE%97%E6%B3%95%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98/'>
 
-<link rel="stylesheet" href="/scss/style.min.35b5cf656aeed6866c8c29f06538873b76aac06fc1c8c993b42ce1408b061e7a.css"><meta property='og:title' content="cmu15445环境搭建以及使用">
-<meta property='og:description' content="1.转到此处 在您的账户下创建新存储库。选择一个名称（例如 ），然后选择 Private 作为仓库可见性级别。bustub-private\n2.在开发计算机上，创建公有 BusTub 存储库的裸克隆：\n">
-<meta property='og:url' content='https://1878247293.github.io/p/cmu15445%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/'>
+<link rel="stylesheet" href="/scss/style.min.35b5cf656aeed6866c8c29f06538873b76aac06fc1c8c993b42ce1408b061e7a.css"><meta property='og:title' content="蒙特卡洛算法模拟实现三门问题">
+<meta property='og:description' content="一. 实验目的：\n\u200b\t蒙特卡洛算法模拟实现三门问题\n二.问题背景：\n\u200b\t三门问题（Monty Hall Problem）是一道经典的概率问题，描述如下：\n">
+<meta property='og:url' content='https://1878247293.github.io/p/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%AE%97%E6%B3%95%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98/'>
 <meta property='og:site_name' content='明天再见个人博客'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-11T15:29:00&#43;08:00'/><meta property='article:modified_time' content='2025-03-21T16:47:50&#43;00:00'/>
-<meta name="twitter:title" content="cmu15445环境搭建以及使用">
-<meta name="twitter:description" content="1.转到此处 在您的账户下创建新存储库。选择一个名称（例如 ），然后选择 Private 作为仓库可见性级别。bustub-private\n2.在开发计算机上，创建公有 BusTub 存储库的裸克隆：\n">
+<meta name="twitter:title" content="蒙特卡洛算法模拟实现三门问题">
+<meta name="twitter:description" content="一. 实验目的：\n\u200b\t蒙特卡洛算法模拟实现三门问题\n二.问题背景：\n\u200b\t三门问题（Monty Hall Problem）是一道经典的概率问题，描述如下：\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
     </head>
@@ -283,8 +283,9 @@
   <ol>
     <li>
       <ol>
-        <li><a href="#linux推荐-macos仅限开发">Linux（推荐）/ macOS（仅限开发）</a></li>
-        <li><a href="#注意"><strong>注意：</strong></a></li>
+        <li><a href="#不换门策略的分析"><strong>不换门策略的分析</strong></a></li>
+        <li><a href="#换门策略的分析"><strong>换门策略的分析</strong></a></li>
+        <li><a href="#总结与蒙特卡洛模拟的结果"><strong>总结与蒙特卡洛模拟的结果</strong></a></li>
       </ol>
     </li>
   </ol>
@@ -306,7 +307,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/cmu15445%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/">cmu15445环境搭建以及使用</a>
+            <a href="/p/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%AE%97%E6%B3%95%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98/">蒙特卡洛算法模拟实现三门问题</a>
         </h2>
     
         
@@ -343,7 +344,7 @@
 
 
                 <time class="article-time--reading">
-                    阅读时长: 3 分钟
+                    阅读时长: 4 分钟
                 </time>
             </div>
         
@@ -358,19 +359,73 @@
     <section class="article-content">
     
     
-    <p>1.转到<a class="link" href="https://github.com/new"  target="_blank" rel="noopener"
-    >此处</a> 在您的账户下创建新存储库。选择一个名称（例如 ），然后选择 <strong>Private</strong> 作为仓库可见性级别。<code>bustub-private</code></p>
-<p>2.在开发计算机上，创建公有 BusTub 存储库的裸克隆：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ git clone --bare https://github.com/cmu-db/bustub.git bustub-public
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>3.接下来，将公有 BusTub 存储库<a class="link" href="https://git-scm.com/docs/git-push#Documentation/git-push.txt---mirror"  target="_blank" rel="noopener"
-    >镜像</a>到您自己的私有 BusTub 存储库。假设您的 GitHub 名称是student ，仓库名称是 bustub-private。镜像存储库的过程是：这会将公有 BusTub 存储库中的所有内容复制到您自己的私有存储库。您现在可以删除公有仓库的本地克隆：</p>
+    <p><strong>一. 实验目的：</strong></p>
+<p>​				蒙特卡洛算法模拟实现三门问题</p>
+<p><strong>二.问题背景：</strong></p>
+<p>​				三门问题（Monty Hall Problem）是一道经典的概率问题，描述如下：</p>
+<ul>
+<li>有三扇门，门后有一辆汽车和两只山羊。</li>
+<li>参与者首先随机选择一扇门。</li>
+<li>主持人知道哪扇门后是汽车，他会打开一扇没有汽车的门（即一扇有山羊的门）。</li>
+<li>参与者接着有一个选择，可以选择保持原来的选择，也可以换另一扇门。</li>
+<li>问题是：参与者换门后能赢得汽车的概率是多少？不换门的概率又是多少？</li>
+</ul>
+<p><strong>三.解题思路：</strong></p>
+<p>​				在“三门问题”中，我们可以从两种策略的模拟结果进一步深入分析和说明：</p>
+<h3 id="不换门策略的分析"><strong>不换门策略的分析</strong>
+</h3><p>在不换门策略下，参与者在第一次选择时随机选定一扇门，选择的门可能是汽车或者山羊。这个过程的概率分布是：</p>
+<ul>
+<li>1/3 的概率选到汽车。</li>
+<li>2/3 的概率选到山羊。</li>
+</ul>
+<p>如果参与者在第一次选择后不换门，那么：</p>
+<ul>
+<li><strong>如果最初选到的是汽车（概率 1/3）</strong>，他们不会改变选择，因此最终赢得汽车。</li>
+<li><strong>如果最初选到的是山羊（概率 2/3）</strong>，他们也不会改变选择，这时他们最终就会输，因为门后是山羊。</li>
+</ul>
+<p><strong>总结：</strong></p>
+<ul>
+<li>不换门的获胜概率是 <strong>1/3</strong>，即最初选择的门后是汽车的概率。</li>
+<li>失败概率是 <strong>2/3</strong>，即最初选择的门后是山羊的概率。</li>
+</ul>
+<p>在代码中，<code>stay()</code> 函数模拟了不换门的策略。每次随机选择一扇门，若选择的是车，返回“win”，若选择的是山羊，则返回“lose”。在统计总数时，最终我们得到了不换门策略下的获胜率。</p>
+<h3 id="换门策略的分析"><strong>换门策略的分析</strong>
+</h3><p>换门策略的逻辑稍有不同，因为主持人会根据参与者的选择打开一扇山羊门，剩下的两扇门中必定有一扇是汽车。参与者如果选择换门，将会选择剩下的另一扇门，这样获胜的概率就不同了：</p>
+<ul>
+<li><strong>如果最初选择的是山羊（概率 2/3）</strong>，主持人会打开另一个山羊门，而剩下的门必定是汽车。因此，换门后，参与者必定能够赢得汽车。</li>
+<li><strong>如果最初选择的是汽车（概率 1/3）</strong>，主持人会打开一扇山羊门，而换门后，参与者选择的门将是山羊，从而无法赢得汽车。</li>
+</ul>
+<p><strong>总结：</strong></p>
+<ul>
+<li>换门的获胜概率是 <strong>2/3</strong>，即最初选择的门后是山羊的概率，因为主持人的行为实际帮助参与者换到汽车。</li>
+<li>失败概率是 <strong>1/3</strong>，即最初选择的门后是汽车的概率，换门后就会选到山羊。</li>
+</ul>
+<p>在代码中，<code>switch()</code> 函数模拟了换门的策略。它首先随机选择一扇门，然后移除已选择的门，再移除主持人打开的山羊门，最后如果剩下的是车，返回“win”，否则返回“lose”。最终统计换门策略下的获胜率。</p>
+<h3 id="总结与蒙特卡洛模拟的结果"><strong>总结与蒙特卡洛模拟的结果</strong>
+</h3><p>通过蒙特卡洛模拟（即反复进行大量实验），我们可以得到两种策略的获胜概率：</p>
+<ul>
+<li><strong>不换门策略</strong>：在100,000次实验中，获胜的比例约为 1/3，这符合我们理论推导的结果。</li>
+<li><strong>换门策略</strong>：在100,000次实验中，获胜的比例约为 2/3，也与理论推导一致。</li>
+</ul>
+<p>从结果中可以看到，换门策略显著提高了获胜的概率。这一结果正是蒙特卡洛方法的强大之处，它通过大量的随机试验，帮助验证了这种直觉上看似反常的概率问题。</p>
+<p><strong>四.结果展示：</strong></p>
+<p><img src="/p/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%AE%97%E6%B3%95%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98/1111.png"
+	width="527"
+	height="228"
+	srcset="/p/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%AE%97%E6%B3%95%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98/1111_hu18259242170411223795.png 480w, /p/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%AE%97%E6%B3%95%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98/1111_hu6499752442123796667.png 1024w"
+	loading="lazy"
+	
+		alt="蒙特卡洛模拟的结果"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="231"
+		data-flex-basis="554px"
+	
+></p>
+<p>​		通过实验结果可以得出，换门策略的获胜概率约为66.45%，不换门策略的获胜概率约为33.41%。这与理论值相符，换门的胜率接近2/3，而不换门的胜率接近1/3，验证了换门策略在“三门问题”中具有更高的获胜概率。</p>
+<p><strong>五. 代码展示：</strong></p>
+<p>​</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -386,95 +441,84 @@
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ cd bustub-public
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"># If you pull / push over HTTPS
-</span></span><span class="line"><span class="cl">$ git push https://github.com/student/bustub-private.git master
-</span></span><span class="line"><span class="cl">#这里现在已经不能用普通的密码登录，需要用token
-</span></span><span class="line"><span class="cl">#详细见这个博客：https://blog.csdn.net/weixin_49614712/article/details/141129442
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">stay</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">doors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;car&#34;</span><span class="p">,</span> <span class="s2">&#34;goat&#34;</span><span class="p">,</span> <span class="s2">&#34;goat&#34;</span><span class="p">]</span>  <span class="c1"># 设置俩个门后是山羊，一个门后是车</span>
+</span></span><span class="line"><span class="cl">    <span class="n">choose</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">doors</span><span class="p">)</span>            <span class="c1"># 随机选择一扇门</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">choose</span> <span class="o">==</span> <span class="s2">&#34;car&#34;</span><span class="p">:</span>               <span class="c1"># 如果选择了车</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s2">&#34;win&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s2">&#34;lose&#34;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"># If you pull / push over SSH
-</span></span><span class="line"><span class="cl">$ git push git@github.com:student/bustub-private.git master
-</span></span><span class="line"><span class="cl">#详细见这个博客：https://blog.csdn.net/jiunian_2761/article/details/122907766
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">switch</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">doors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;car&#34;</span><span class="p">,</span> <span class="s2">&#34;goat&#34;</span><span class="p">,</span> <span class="s2">&#34;goat&#34;</span><span class="p">]</span>   <span class="c1"># 设置门后面分别是山羊和车</span>
+</span></span><span class="line"><span class="cl">    <span class="n">choose</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">doors</span><span class="p">)</span>            <span class="c1"># 随机选择一扇门</span>
+</span></span><span class="line"><span class="cl">    <span class="n">doors</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">choose</span><span class="p">)</span>              <span class="c1"># 移除第一次选择的门</span>
+</span></span><span class="line"><span class="cl">    <span class="n">doors</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&#34;goat&#34;</span><span class="p">)</span>              <span class="c1"># 主持人打开一扇门，是一只山羊</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">doors</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&#34;car&#34;</span><span class="p">]:</span>             <span class="c1"># 如果剩下的门是车</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s2">&#34;win&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s2">&#34;lose&#34;</span>
 </span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="o">=</span> <span class="mi">100000</span>
+</span></span><span class="line"><span class="cl"><span class="n">count_switch</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">win_switch</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">count_stay</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">win_stay</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">choose</span> <span class="o">=</span> <span class="n">choice</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>  <span class="c1"># 随机选择是否换门</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">choose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">count_switch</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">switch</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&#34;win&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">win_switch</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">count_stay</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">stay</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&#34;win&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">win_stay</span> <span class="o">+=</span> <span class="mi">1</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">#关于github想要了解更多的话，就参考这个文章   https://zhuanlan.zhihu.com/p/193140870
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;换门的次数为:&#34;</span><span class="p">,</span> <span class="n">count_switch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;换门后得到车的次数为:&#34;</span><span class="p">,</span> <span class="n">win_switch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;不换门的次数为:&#34;</span><span class="p">,</span> <span class="n">count_stay</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;不换门后得到车的次数为:&#34;</span><span class="p">,</span> <span class="n">win_stay</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 换门与不换门的赢率结果</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;换门赢的概率为:&#34;</span><span class="p">,</span> <span class="n">win_switch</span> <span class="o">/</span> <span class="n">count_switch</span> <span class="k">if</span> <span class="n">count_switch</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;不换门赢的概率为:&#34;</span><span class="p">,</span> <span class="n">win_stay</span> <span class="o">/</span> <span class="n">count_stay</span> <span class="k">if</span> <span class="n">count_stay</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ cd ..
-</span></span><span class="line"><span class="cl">$ rm -rf bustub-public
-</span></span></code></pre></td></tr></table>
 </div>
-</div><p>4.将私有仓库克隆到开发计算机：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># If you pull / push over HTTPS
-</span></span><span class="line"><span class="cl">$ git clone https://github.com/student/bustub-private.git
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"># If you pull / push over SSH
-</span></span><span class="line"><span class="cl">$ git clone git@github.com:student/bustub-private.git
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="linux推荐-macos仅限开发">Linux（推荐）/ macOS（仅限开发）
-</h3><p>要确保您的计算机上有正确的软件包，请运行以下脚本以自动安装它们：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Linux
-</span></span><span class="line"><span class="cl">$ sudo build_support/packages.sh
-</span></span><span class="line"><span class="cl">#chmod +x build_support/packages.sh   这里可能会没有权限导致找不到文件，使用这句话添加权限
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>然后运行以下命令来构建系统：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">￥ rm -rf build
-</span></span><span class="line"><span class="cl">$ mkdir build
-</span></span><span class="line"><span class="cl">$ cd build
-</span></span><span class="line"><span class="cl">$ cmake ..
-</span></span><span class="line"><span class="cl">#  chmod +x /root/bustub-pubilc/build_support/cpplint.py同上
-</span></span><span class="line"><span class="cl">$ make            这里可用make -j 4  加速
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="注意"><strong>注意：</strong>
-</h3><p>修改一下Cmake，不然不出意外会抛一个warning：&quot;!! We recommend that you use clang-12 for developing BusTub. You&rsquo;re using xxx, which is not clang.&quot;。字符串里填的是你自己clang的安装地址。</p>
-<p>set(CMAKE_C_COMPILER &ldquo;/usr/bin/clang&rdquo;)
-set(CMAKE_CXX_COMPILER &ldquo;/usr/bin/clang++&rdquo;)</p>
-<p>要是有其他问题的话，可参考以下（我所参考过的）文件</p>
-<p><a class="link" href="https://blog.csdn.net/J__M__C/article/details/129858032"  target="_blank" rel="noopener"
-    >CMU15445（2023 Spring） lab - 环境配置_cmu的15445的lab-CSDN博客</a></p>
-<p><a class="link" href="https://blog.csdn.net/weixin_49614712/article/details/141129442"  target="_blank" rel="noopener"
-    >（全网最详细！！！）CMU15-445（Fall 2023）——从环境搭建开始的P0详细历程及踩坑经历_cmu15445-CSDN博客</a></p>
-<p>[CMU15445-2023Fall，Lab0 C++Primer 个人流程记录-CSDN博客](<a class="link" href="https://blog.csdn.net/EQUINOX1/article/details/142740875?ops_request_misc=%7B%22request%5Fid%22%3A%2283adc256f0232def1afe12b892ef5e58%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=83adc256f0232def1afe12b892ef5e58&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-142740875-null-null.142%5ev101%5epc_search_result_base5&amp;utm_term=cmu15445"  target="_blank" rel="noopener"
-    >https://blog.csdn.net/EQUINOX1/article/details/142740875?ops_request_misc=%7B%22request%5Fid%22%3A%2283adc256f0232def1afe12b892ef5e58%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&request_id=83adc256f0232def1afe12b892ef5e58&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-142740875-null-null.142^v101^pc_search_result_base5&utm_term=cmu15445</a> 2023fall&amp;spm=1018.2226.3001.4187)</p>
-
 </section>
 
 
