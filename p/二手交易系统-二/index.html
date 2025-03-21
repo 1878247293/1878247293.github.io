@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="一. 本次讲解\n\u200b\n二. 代码讲解：\n\u200b\t1. 管理与页面历史相关\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 import flask from flask import Blueprint import db # 创建一个名为 &#39;page_history&#39; 的 Blueprint，负责管理与页面历史相关的路由 page_history = Blueprint(&#39;page_history&#39;, __name__) # 定义一个路由，当访问路径为 &#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39; 时，调用 history 函数 @page_history.route(&#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39;) def history(gid, sel, buy): &#34;&#34;&#34; 渲染历史页面模板 :param gid: 商品ID :param sel: 卖家ID :param buy: 买家ID :return: 渲染历史页面模板 &#34;&#34;&#34; return flask.render_template(&#39;./static/templates/history.html&#39;) # 渲染指定的 HTML 模板 \u200b\t2. 处理登录页面相关\n">
+<title>二手交易系统-（二）</title>
+
+<link rel='canonical' href='https://1878247293.github.io/p/%E4%BA%8C%E6%89%8B%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F-%E4%BA%8C/'>
+
+<link rel="stylesheet" href="/scss/style.min.35b5cf656aeed6866c8c29f06538873b76aac06fc1c8c993b42ce1408b061e7a.css"><meta property='og:title' content="二手交易系统-（二）">
+<meta property='og:description' content="一. 本次讲解\n\u200b\n二. 代码讲解：\n\u200b\t1. 管理与页面历史相关\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 import flask from flask import Blueprint import db # 创建一个名为 &#39;page_history&#39; 的 Blueprint，负责管理与页面历史相关的路由 page_history = Blueprint(&#39;page_history&#39;, __name__) # 定义一个路由，当访问路径为 &#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39; 时，调用 history 函数 @page_history.route(&#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39;) def history(gid, sel, buy): &#34;&#34;&#34; 渲染历史页面模板 :param gid: 商品ID :param sel: 卖家ID :param buy: 买家ID :return: 渲染历史页面模板 &#34;&#34;&#34; return flask.render_template(&#39;./static/templates/history.html&#39;) # 渲染指定的 HTML 模板 \u200b\t2. 处理登录页面相关\n">
+<meta property='og:url' content='https://1878247293.github.io/p/%E4%BA%8C%E6%89%8B%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F-%E4%BA%8C/'>
+<meta property='og:site_name' content='明天再见个人博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-11T23:44:00&#43;08:00'/><meta property='article:modified_time' content='2025-03-21T16:32:16&#43;00:00'/>
+<meta name="twitter:title" content="二手交易系统-（二）">
+<meta name="twitter:description" content="一. 本次讲解\n\u200b\n二. 代码讲解：\n\u200b\t1. 管理与页面历史相关\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 import flask from flask import Blueprint import db # 创建一个名为 &#39;page_history&#39; 的 Blueprint，负责管理与页面历史相关的路由 page_history = Blueprint(&#39;page_history&#39;, __name__) # 定义一个路由，当访问路径为 &#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39; 时，调用 history 函数 @page_history.route(&#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39;) def history(gid, sel, buy): &#34;&#34;&#34; 渲染历史页面模板 :param gid: 商品ID :param sel: 卖家ID :param buy: 买家ID :return: 渲染历史页面模板 &#34;&#34;&#34; return flask.render_template(&#39;./static/templates/history.html&#39;) # 渲染指定的 HTML 模板 \u200b\t2. 处理登录页面相关\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu6528894822542699760.png" width="300"
+                            height="236" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">明天再见个人博客</a></h1>
+            <h2 class="site-description">欢迎来到我的网站</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/366783890?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/dashboard'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E4%BA%8C%E6%89%8B%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F-%E4%BA%8C/">二手交易系统-（二）</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 11, 2024</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><strong>一. 本次讲解</strong></p>
+<p>​</p>
+<p><strong>二. 代码讲解：</strong></p>
+<p>​			<strong>1. 管理与页面历史相关</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">db</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个名为 &#39;page_history&#39; 的 Blueprint，负责管理与页面历史相关的路由</span>
+</span></span><span class="line"><span class="cl"><span class="n">page_history</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;page_history&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义一个路由，当访问路径为 &#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39; 时，调用 history 函数</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_history.route</span><span class="p">(</span><span class="s1">&#39;/history_&lt;gid&gt;_&lt;sel&gt;_&lt;buy&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">sel</span><span class="p">,</span> <span class="n">buy</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    渲染历史页面模板
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 商品ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param sel: 卖家ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param buy: 买家ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 渲染历史页面模板
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;./static/templates/history.html&#39;</span><span class="p">)</span>  <span class="c1"># 渲染指定的 HTML 模板</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​					<strong>2. 处理登录页面相关</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">db</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个Blueprint实例，用于处理登录页面相关的路由</span>
+</span></span><span class="line"><span class="cl"><span class="n">page_login</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;page_login&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/login路由，支持GET和POST请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_login.route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    处理登录页面的请求
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        - 当请求方法为GET时，返回登录页面的HTML。
+</span></span></span><span class="line"><span class="cl"><span class="s2">        - 当请求方法为POST时，接收表单提交的用户名和密码，与数据库中的信息进行验证，返回验证结果。
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>  <span class="c1"># 如果请求方法是POST，表示提交了登录表单</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 从表单中获取用户名和密码</span>
+</span></span><span class="line"><span class="cl">        <span class="n">name</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">psw</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;psw&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 如果用户名或密码为空，返回403错误</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">psw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">make_response</span><span class="p">(</span><span class="s1">&#39;Failed&#39;</span><span class="p">,</span> <span class="mi">403</span><span class="p">)</span>  <span class="c1"># 返回403错误，表示失败</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 调用db模块中的login_check函数，验证用户名和密码是否匹配</span>
+</span></span><span class="line"><span class="cl">        <span class="n">check_res</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">authority</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">login_check</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">psw</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 如果验证成功（check_res == 0），返回success以及用户ID</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">check_res</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="s1">&#39;success&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 如果验证失败，返回fail</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="s1">&#39;fail&#39;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>  <span class="c1"># 如果请求方法是GET，表示请求的是登录页面</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 渲染并返回登录页面的HTML</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;./static/templates/login.html&#39;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​				<strong>3.处理首页及推荐商品相关</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">db</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个Blueprint实例，用于处理首页及推荐商品相关的路由</span>
+</span></span><span class="line"><span class="cl"><span class="n">page_front</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;page_front&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义根路径(&#39;/&#39;)路由，处理首页请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_front.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">root</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    首页
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回首页HTML模板
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 渲染并返回首页的HTML模板</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;./static/templates/index.html&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/recommend路由，处理推荐商品请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_front.route</span><span class="p">(</span><span class="s1">&#39;/recommend&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">recommend</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    获取最多30个商品，并将其打包成JSON格式返回
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        返回包含商品信息的JSON对象
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 从数据库中获取最多30个商品的信息</span>
+</span></span><span class="line"><span class="cl">    <span class="n">goods_info</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_some_goods</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 将商品信息打包成JSON格式并返回</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">jsonify</span><span class="p">(</span><span class="n">goods_info</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​				<strong>4.处理商品上传和更新相关的路由</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">db</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">datetime</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个Blueprint实例，用于处理商品上传和更新相关的路由</span>
+</span></span><span class="line"><span class="cl"><span class="n">page_upload</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;page_upload&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/upload_&lt;op&gt;路由，处理上传商品的请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_upload.route</span><span class="p">(</span><span class="s1">&#39;/upload_&lt;op&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="n">op</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    上传商品页面
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param op: 操作类型，&#39;new&#39;表示新增商品，&#39;update&#39;表示更新已有商品
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: null
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 当请求方法为GET时，返回上传页面</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;new&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 如果是新增商品，返回空的上传页面</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;./static/templates/upload.html&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 如果是更新商品，获取商品信息并返回编辑页面</span>
+</span></span><span class="line"><span class="cl">            <span class="n">gid</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">goods</span><span class="p">,</span> <span class="n">cmt</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_item_info</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">gid</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>  <span class="c1"># 获取商品信息</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;./static/templates/upload.html&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="n">goods</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 当请求方法为POST时，处理表单提交的数据</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 获取表单中的商品信息</span>
+</span></span><span class="line"><span class="cl">        <span class="n">name</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>  <span class="c1"># 商品名称</span>
+</span></span><span class="line"><span class="cl">        <span class="n">price</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">)</span>  <span class="c1"># 商品价格</span>
+</span></span><span class="line"><span class="cl">        <span class="n">des</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;des&#39;</span><span class="p">)</span>  <span class="c1"># 商品描述</span>
+</span></span><span class="line"><span class="cl">        <span class="n">uploader</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uploader&#39;</span><span class="p">)</span>  <span class="c1"># 上传者</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 处理新增商品的逻辑</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;new&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 获取上传的商品图片文件</span>
+</span></span><span class="line"><span class="cl">            <span class="n">f_img</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">f_img_name</span> <span class="o">=</span> <span class="n">f_img</span><span class="o">.</span><span class="n">filename</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 获取当前时间戳，作为文件保存名称的一部分</span>
+</span></span><span class="line"><span class="cl">            <span class="n">t</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">-%H-%M-%S&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">full_path</span> <span class="o">=</span> <span class="s1">&#39;static/img/&#39;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">f_img_name</span>  <span class="c1"># 保存路径</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">des</span><span class="p">,</span> <span class="n">f_img_name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 保存图片文件</span>
+</span></span><span class="line"><span class="cl">                <span class="n">f_img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 将商品信息插入数据库</span>
+</span></span><span class="line"><span class="cl">                <span class="n">db</span><span class="o">.</span><span class="n">insert_goods</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">des</span><span class="p">,</span> <span class="s1">&#39;../&#39;</span> <span class="o">+</span> <span class="n">full_path</span><span class="p">,</span> <span class="n">uploader</span><span class="p">,</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gid&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="s1">&#39;Error: fail to save file.&#39;</span>  <span class="c1"># 如果文件保存失败，返回错误信息</span>
+</span></span><span class="line"><span class="cl">            <span class="k">finally</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>  <span class="c1"># 成功后跳转到首页</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 处理更新商品的逻辑</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;update&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 获取上传的商品图片文件</span>
+</span></span><span class="line"><span class="cl">            <span class="n">f_img</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">f_img_name</span> <span class="o">=</span> <span class="n">f_img</span><span class="o">.</span><span class="n">filename</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 如果上传了新图片</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">f_img_name</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">t</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">-%H-%M-%S&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">full_path</span> <span class="o">=</span> <span class="s1">&#39;static/img/&#39;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">f_img_name</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="o">+</span><span class="n">f_img_name</span><span class="o">+</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">f_img_name</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">                <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1"># 保存图片文件</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">f_img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1"># 更新商品信息</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">db</span><span class="o">.</span><span class="n">insert_goods</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">des</span><span class="p">,</span> <span class="s1">&#39;../&#39;</span> <span class="o">+</span> <span class="n">full_path</span><span class="p">,</span> <span class="n">uploader</span><span class="p">,</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gid&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">return</span> <span class="s1">&#39;Error: fail to save file.&#39;</span>  <span class="c1"># 如果文件保存失败，返回错误信息</span>
+</span></span><span class="line"><span class="cl">                <span class="k">finally</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>  <span class="c1"># 成功后跳转到首页</span>
+</span></span><span class="line"><span class="cl">            <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 如果没有上传新图片，仅更新其他信息</span>
+</span></span><span class="line"><span class="cl">                <span class="n">db</span><span class="o">.</span><span class="n">insert_goods</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">des</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">uploader</span><span class="p">,</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gid&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 如果操作不符合预期，返回404</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;404 Not Found.&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​				<strong>5.处理用户注册相关的路由</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">db</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个Blueprint实例，用于处理用户注册相关的路由</span>
+</span></span><span class="line"><span class="cl"><span class="n">page_register</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;page_register&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/register路由，处理用户注册请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_register.route</span><span class="p">(</span><span class="s1">&#39;/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    注册页面
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        当请求方法为GET时，返回HTML注册页面
+</span></span></span><span class="line"><span class="cl"><span class="s2">        当请求方法为POST时，将新用户的信息插入数据库
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 当请求方法为GET时，返回注册页面</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;./static/templates/register.html&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 当请求方法为POST时，处理表单提交的数据</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 获取表单中的用户信息</span>
+</span></span><span class="line"><span class="cl">        <span class="n">name</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>  <span class="c1"># 用户名</span>
+</span></span><span class="line"><span class="cl">        <span class="n">psw</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;psw&#39;</span><span class="p">)</span>  <span class="c1"># 密码</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cps</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cps&#39;</span><span class="p">)</span>  <span class="c1"># 确认密码</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tel</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tel&#39;</span><span class="p">)</span>  <span class="c1"># 电话号码</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sid</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sid&#39;</span><span class="p">)</span>  <span class="c1"># 学号</span>
+</span></span><span class="line"><span class="cl">        <span class="n">vx</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vx&#39;</span><span class="p">)</span>  <span class="c1"># 微信号</span>
+</span></span><span class="line"><span class="cl">        <span class="n">qq</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;qq&#39;</span><span class="p">)</span>  <span class="c1"># QQ号</span>
+</span></span><span class="line"><span class="cl">        <span class="n">email</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>  <span class="c1"># 邮箱</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 调用数据库函数插入新用户信息</span>
+</span></span><span class="line"><span class="cl">        <span class="n">r</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">insert_user</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">psw</span><span class="o">=</span><span class="n">psw</span><span class="p">,</span> <span class="n">cps</span><span class="o">=</span><span class="n">cps</span><span class="p">,</span> <span class="n">tel</span><span class="o">=</span><span class="n">tel</span><span class="p">,</span> <span class="n">sid</span><span class="o">=</span><span class="n">sid</span><span class="p">,</span> <span class="n">vx</span><span class="o">=</span><span class="n">vx</span><span class="p">,</span> <span class="n">qq</span><span class="o">=</span><span class="n">qq</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 返回数据库插入结果</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">r</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​		<strong>6.处理与用户信息相关的路由</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">db</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个Blueprint实例，用于处理与用户信息相关的路由</span>
+</span></span><span class="line"><span class="cl"><span class="n">page_myinfo</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;page_myinfo&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/myinfo路由，显示当前用户信息</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_myinfo.route</span><span class="p">(</span><span class="s1">&#39;/myinfo&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">myInfo</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    显示和编辑当前用户的信息
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: null
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取当前登录用户的userid（从cookies中获取）</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cur_user</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;userid&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 如果用户未登录，重定向到登录页面</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">cur_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取当前用户的详细信息，包括上传的商品、交易记录和收藏的商品</span>
+</span></span><span class="line"><span class="cl">    <span class="n">info</span><span class="p">,</span> <span class="n">up</span><span class="p">,</span> <span class="n">deals</span><span class="p">,</span> <span class="n">fav</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_user_info</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="n">cur_user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 渲染myinfo.html页面，传递用户信息</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;./static/templates/myinfo.html&#39;</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="n">up</span><span class="p">,</span> <span class="n">deals</span><span class="o">=</span><span class="n">deals</span><span class="p">,</span> <span class="n">fav</span><span class="o">=</span><span class="n">fav</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/user_&lt;uid&gt;路由，显示指定用户的信息</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_myinfo.route</span><span class="p">(</span><span class="s1">&#39;/user_&lt;uid&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">user_info</span><span class="p">(</span><span class="n">uid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取指定用户的详细信息</span>
+</span></span><span class="line"><span class="cl">    <span class="n">info</span><span class="p">,</span> <span class="n">up</span><span class="p">,</span> <span class="n">deals</span><span class="p">,</span> <span class="n">fav</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_user_info</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 渲染userinfo.html页面，传递用户信息</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;./static/templates/userinfo.html&#39;</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="n">up</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/modify_deal路由，处理修改交易状态的请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_myinfo.route</span><span class="p">(</span><span class="s1">&#39;/modify_deal&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">modify_deal</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    修改交易，能够更改交易状态或删除交易
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: null
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取请求的表单数据</span>
+</span></span><span class="line"><span class="cl">    <span class="n">req</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用db.modify_deal()函数，根据表单数据修改交易</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">modify_deal</span><span class="p">(</span><span class="n">req</span><span class="p">[</span><span class="s1">&#39;gid&#39;</span><span class="p">],</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;buyer&#39;</span><span class="p">],</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;seller&#39;</span><span class="p">],</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;do&#39;</span><span class="p">],</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 返回操作成功的消息</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s1">&#39;good&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/remove_goods路由，处理删除商品的请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_myinfo.route</span><span class="p">(</span><span class="s1">&#39;/remove_goods&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">rm_goods</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 从表单中获取商品ID，并调用db.remove_goods()函数删除商品</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">remove_goods</span><span class="p">(</span><span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gid&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/remove_favorites路由，处理删除收藏商品的请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_myinfo.route</span><span class="p">(</span><span class="s1">&#39;/remove_favorites&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">rm_favorites</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取表单数据（用户ID和商品ID）</span>
+</span></span><span class="line"><span class="cl">    <span class="n">info</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用db.remove_favorites()函数删除指定用户的收藏商品</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">remove_favorites</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;uid&#39;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;gid&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/modify_info路由，处理修改用户信息的请求</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_myinfo.route</span><span class="p">(</span><span class="s1">&#39;/modify_info&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">modify_info</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取表单中提交的用户新信息</span>
+</span></span><span class="line"><span class="cl">    <span class="n">new_info</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用db.modify_info()函数修改用户信息</span>
+</span></span><span class="line"><span class="cl">    <span class="n">rt</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">modify_info</span><span class="p">(</span><span class="n">new_info</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 返回修改操作的结果</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">rt</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>7.处理与商品信息和用户交互相关的路由</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">db</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个Blueprint实例，用于处理与商品信息和用户交互相关的路由</span>
+</span></span><span class="line"><span class="cl"><span class="n">page_briefing</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;page_briefing&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/item_&lt;gid&gt;路由，展示商品的详细信息</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_briefing.route</span><span class="p">(</span><span class="s1">&#39;/item_&lt;gid&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">itemInfo</span><span class="p">(</span><span class="n">gid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    显示商品详细信息并支持更新
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 商品ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: null
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 从数据库获取商品信息和评论</span>
+</span></span><span class="line"><span class="cl">    <span class="n">info</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_item_info</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">gid</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取当前登录用户的ID（通过cookies获取）</span>
+</span></span><span class="line"><span class="cl">    <span class="n">user_id</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;userid&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">user_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 如果用户已登录，获取用户基本信息、上传商品、交易记录和收藏商品等</span>
+</span></span><span class="line"><span class="cl">        <span class="n">basic</span><span class="p">,</span> <span class="n">up</span><span class="p">,</span> <span class="n">deals</span><span class="p">,</span> <span class="n">fav</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_user_info</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">aut</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;aut&#39;</span><span class="p">]</span>  <span class="c1"># 用户权限</span>
+</span></span><span class="line"><span class="cl">        <span class="n">name</span> <span class="o">=</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>  <span class="c1"># 用户名</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">aut</span> <span class="o">=</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">        <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 渲染商品详细信息页面，并传递商品信息、评论、用户权限和用户名等数据</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;static/templates/briefing.html&#39;</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span> <span class="n">aut</span><span class="o">=</span><span class="n">aut</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/buy路由，处理购买操作</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_briefing.route</span><span class="p">(</span><span class="s1">&#39;/buy&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">buy</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    处理购买操作，接收POST请求
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 操作状态
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取表单数据</span>
+</span></span><span class="line"><span class="cl">    <span class="n">deal</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用数据库操作函数记录交易</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">new_deal</span><span class="p">(</span><span class="n">deal</span><span class="p">[</span><span class="s1">&#39;buyer_id&#39;</span><span class="p">],</span> <span class="n">deal</span><span class="p">[</span><span class="s1">&#39;seller_id&#39;</span><span class="p">],</span> <span class="n">deal</span><span class="p">[</span><span class="s1">&#39;gid&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s1">&#39;good&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/add_comment路由，处理添加评论操作</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_briefing.route</span><span class="p">(</span><span class="s1">&#39;/add_comment&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">add_comment</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    向数据库添加评论，POST请求应该包含所有必要的信息
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 确认消息 &#39;good&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取表单数据</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gid</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gid&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">time</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">commenter</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;commenter&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">text</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">reply_to</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;replyTo&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用数据库操作函数插入评论</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">insert_comment</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">commenter</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">reply_to</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s1">&#39;good&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/like路由，处理商品添加到用户收藏的操作</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_briefing.route</span><span class="p">(</span><span class="s1">&#39;/like&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">like</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    将商品添加到用户收藏夹
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 操作状态
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取表单数据</span>
+</span></span><span class="line"><span class="cl">    <span class="n">info</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用数据库操作函数将商品添加到收藏</span>
+</span></span><span class="line"><span class="cl">    <span class="n">rt</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">insert_favorites</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;uid&#39;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;gid&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">rt</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义/remove_cmt路由，处理删除评论操作</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@page_briefing.route</span><span class="p">(</span><span class="s1">&#39;/remove_cmt&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">rm_comment</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    删除评论，级别为3和2的用户有权限删除任何评论，
+</span></span></span><span class="line"><span class="cl"><span class="s2">    级别1的用户只能删除自己发布的评论
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 操作状态
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取表单数据</span>
+</span></span><span class="line"><span class="cl">    <span class="n">info</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">form</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取当前登录用户的ID（通过cookies获取）</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cur_user</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;userid&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取当前用户的基本信息、上传商品、交易记录和收藏商品等</span>
+</span></span><span class="line"><span class="cl">    <span class="n">basic</span><span class="p">,</span> <span class="n">up</span><span class="p">,</span> <span class="n">deals</span><span class="p">,</span> <span class="n">fav</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_user_info</span><span class="p">(</span><span class="n">userid</span><span class="o">=</span><span class="n">cur_user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 如果当前用户是评论的发布者，允许删除评论</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;commenter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span>  <span class="c1"># 删除自己的评论</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">remove_comment</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cid&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;您发布的评论已删除&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 如果当前用户有删除评论的权限，允许删除其他用户的评论</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;aut&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">basic</span><span class="p">[</span><span class="s1">&#39;aut&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 用户权限为3或2，有删除权限</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">remove_comment</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cid&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;您已删除其他用户的评论，请不要做权限狗&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 如果用户权限不足，无法删除评论</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s1">&#39;您无权删除别人的评论&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​		<strong>8.main</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">configparser</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 导入各个蓝图模块</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">page_front</span> <span class="kn">import</span> <span class="n">page_front</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">page_upload</span> <span class="kn">import</span> <span class="n">page_upload</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">page_login</span> <span class="kn">import</span> <span class="n">page_login</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">page_briefing</span> <span class="kn">import</span> <span class="n">page_briefing</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">page_register</span> <span class="kn">import</span> <span class="n">page_register</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">page_myinfo</span> <span class="kn">import</span> <span class="n">page_myinfo</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">page_history</span> <span class="kn">import</span> <span class="n">page_history</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建配置解析器对象</span>
+</span></span><span class="line"><span class="cl"><span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 程序入口</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 创建Flask应用对象</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">)</span>  <span class="c1"># 设置模板文件的根目录为当前目录</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 注册各个蓝图（模块化的路由和视图）</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">page_front</span><span class="p">)</span>  <span class="c1"># 前端页面蓝图</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">page_upload</span><span class="p">)</span>  <span class="c1"># 上传商品蓝图</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">page_login</span><span class="p">)</span>  <span class="c1"># 登录页面蓝图</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">page_briefing</span><span class="p">)</span>  <span class="c1"># 商品详情页面蓝图</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">page_register</span><span class="p">)</span>  <span class="c1"># 注册页面蓝图</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">page_myinfo</span><span class="p">)</span>  <span class="c1"># 用户个人信息页面蓝图</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">page_history</span><span class="p">)</span>  <span class="c1"># 历史记录页面蓝图</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 读取配置文件（config.cfg）</span>
+</span></span><span class="line"><span class="cl">    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;config.cfg&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 使用配置文件中的项目目录，切换到该目录</span>
+</span></span><span class="line"><span class="cl">    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;cd &#39;</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="s1">&#39;proj_dir&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 设置缓存时间为1秒</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SEND_FILE_MAX_AGE_DEFAULT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 设置Flask应用的secret_key，用于会话管理和签名</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">secret_key</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 启动Flask应用</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="s1">&#39;port&#39;</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​</p>
+<p>​</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Mar 21, 2025 16:32 UTC
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script
+    src="https://giscus.app/client.js"
+    data-repo="1878247293/1878247293.github.io"
+    data-repo-id="R_kgDONMr1fg"
+    data-category="Announcements"
+    data-category-id="DIC_kwDONMr1fs4CkNCD"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="zh-CN"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+></script>
+<script>
+    function setGiscusTheme(theme) {
+        let giscus = document.querySelector("iframe.giscus-frame");
+        if (giscus) {
+            giscus.contentWindow.postMessage(
+                {
+                    giscus: {
+                        setConfig: {
+                            theme: theme,
+                        },
+                    },
+                },
+                "https://giscus.app"
+            );
+        }
+    }
+
+    (function () {
+        addEventListener("message", (e) => {
+            if (event.origin !== "https://giscus.app") return;
+            handler();
+        });
+        window.addEventListener("onColorSchemeChange", handler);
+
+        function handler() {
+            if (document.documentElement.dataset.scheme === "light") {
+                setGiscusTheme('light');
+            } else {
+                setGiscusTheme('dark_dimmed');
+            }
+        }
+    })();
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 明天再见
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<div id="aplayer"></div>
+
+<script>
+	const home = "https://1878247293.github.io/"
+	const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+	
+    audio: [{
+        name: '天下有情人',
+        artist: '周华健',
+        url: home+'music/天下有情人-周华健/song.mp3',
+        cover: home+'music/天下有情人-周华健/cover.jpg',
+		 
+    },
+	{
+		
+	}]
+});
+</script>
+<style>
+  body {
+    background: url(https://1878247293.github.io/background/7nzi4hch.png) no-repeat center top;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+</style>
+<script src=https://1878247293.github.io/background/sakura.js></script>
+<div id="particles-js"></div>
+
+<script src=https://1878247293.github.io/background/particles.min.js></script>
+<script>
+  particlesJS.load('particles-js', "https://1878247293.github.io/background/particlesjs-config.json", function() {
+    console.log('particles.js loaded - callback');
+  });
+</script>
+
+<style>
+  #particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+  }
+</style>
+
+
+<script>
+const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+const cssPath = "https://1878247293.github.io/waifu/waifu.css"
+const waifujosnPath = "https://1878247293.github.io/waifu/waifu-tips.json"
+const live2dPath = "https://1878247293.github.io/waifu/live2d.min.js"
+
+function loadExternalResource(url, type) {
+	return new Promise((resolve, reject) => {
+		let tag;
+
+		if (type === "css") {
+			tag = document.createElement("link");
+			tag.rel = "stylesheet";
+			tag.href = url;
+		}
+		else if (type === "js") {
+			tag = document.createElement("script");
+			tag.src = url;
+		}
+		if (tag) {
+			tag.onload = () => resolve(url);
+			tag.onerror = () => reject(url);
+			document.head.appendChild(tag);
+		}
+	});
+}
+
+
+if (screen.width >= 768) {
+	Promise.all([
+		loadExternalResource(cssPath, "css"),
+		loadExternalResource(live2dPath, "js"),
+		loadExternalResource(live2d_path + "waifu-tips.js", "js")
+	]).then(() => {
+		
+		initWidget({
+			waifuPath: waifujosnPath,
+			
+			cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+			tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+		});
+		initWaifuMouseEvent();
+	});
+}
+function initWaifuMouseEvent() {
+        const waifu = document.getElementById("waifu");
+        let isDown = false;
+        let waifuLeft;
+        let mouseLeft;
+        let waifuTop;
+        let mouseTop;
+        
+        waifu.onmousedown = function (e) {
+            isDown = true;
+            
+            waifuLeft = waifu.offsetLeft;
+            mouseLeft = e.clientX;
+            
+            waifuTop = waifu.offsetTop;
+            mouseTop = e.clientY;
+        }
+        
+        window.onmousemove = function (e) {
+            if (!isDown) {
+                return;
+            }
+            
+            let currentLeft = waifuLeft + (e.clientX - mouseLeft);
+            if (currentLeft < 0) {
+                currentLeft = 0;
+            } else if (currentLeft > window.innerWidth - 300) {
+                currentLeft = window.innerWidth - 300;
+            }
+            waifu.style.left = currentLeft  + "px";
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+        
+        window.onmouseup = function (e) {
+            isDown = false;
+        }
+    }
+</script>
+
+
+
+
+
+    </body>
+</html>

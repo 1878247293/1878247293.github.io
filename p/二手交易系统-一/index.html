@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="一. 本次讲解\n\u200b\tsql语句关于python的相关操作\n二. 代码讲解：\n\u200b\t1. 配置文件读取与数据库连接\n1 2 3 4 5 6 7 # 导入 pymysql 库，用于连接 MySQL 数据库 import pymysql # 导入 configparser 模块，用于读取配置文件 import configparser # 读取数据库配置信息 config = configparser.ConfigParser() config.read(&#39;config.cfg&#39;, encoding=&#39;utf-8&#39;) 功能：读取config.cfg配置文件，以便从中获取数据库连接所需的参数，如主机、用户、密码等。\n">
+<title>二手交易系统-（一）</title>
+
+<link rel='canonical' href='https://1878247293.github.io/p/%E4%BA%8C%E6%89%8B%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F-%E4%B8%80/'>
+
+<link rel="stylesheet" href="/scss/style.min.35b5cf656aeed6866c8c29f06538873b76aac06fc1c8c993b42ce1408b061e7a.css"><meta property='og:title' content="二手交易系统-（一）">
+<meta property='og:description' content="一. 本次讲解\n\u200b\tsql语句关于python的相关操作\n二. 代码讲解：\n\u200b\t1. 配置文件读取与数据库连接\n1 2 3 4 5 6 7 # 导入 pymysql 库，用于连接 MySQL 数据库 import pymysql # 导入 configparser 模块，用于读取配置文件 import configparser # 读取数据库配置信息 config = configparser.ConfigParser() config.read(&#39;config.cfg&#39;, encoding=&#39;utf-8&#39;) 功能：读取config.cfg配置文件，以便从中获取数据库连接所需的参数，如主机、用户、密码等。\n">
+<meta property='og:url' content='https://1878247293.github.io/p/%E4%BA%8C%E6%89%8B%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F-%E4%B8%80/'>
+<meta property='og:site_name' content='明天再见个人博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-11T23:44:00&#43;08:00'/><meta property='article:modified_time' content='2025-03-21T16:32:16&#43;00:00'/>
+<meta name="twitter:title" content="二手交易系统-（一）">
+<meta name="twitter:description" content="一. 本次讲解\n\u200b\tsql语句关于python的相关操作\n二. 代码讲解：\n\u200b\t1. 配置文件读取与数据库连接\n1 2 3 4 5 6 7 # 导入 pymysql 库，用于连接 MySQL 数据库 import pymysql # 导入 configparser 模块，用于读取配置文件 import configparser # 读取数据库配置信息 config = configparser.ConfigParser() config.read(&#39;config.cfg&#39;, encoding=&#39;utf-8&#39;) 功能：读取config.cfg配置文件，以便从中获取数据库连接所需的参数，如主机、用户、密码等。\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu6528894822542699760.png" width="300"
+                            height="236" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">明天再见个人博客</a></h1>
+            <h2 class="site-description">欢迎来到我的网站</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/366783890?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/dashboard'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E4%BA%8C%E6%89%8B%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F-%E4%B8%80/">二手交易系统-（一）</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 11, 2024</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 10 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><strong>一. 本次讲解</strong></p>
+<p>​			sql语句关于python的相关操作</p>
+<p><strong>二. 代码讲解：</strong></p>
+<p>​			<strong>1. 配置文件读取与数据库连接</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 导入 pymysql 库，用于连接 MySQL 数据库</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pymysql</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 导入 configparser 模块，用于读取配置文件</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">configparser</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 读取数据库配置信息</span>
+</span></span><span class="line"><span class="cl"><span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;config.cfg&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能</strong>：读取<code>config.cfg</code>配置文件，以便从中获取数据库连接所需的参数，如主机、用户、密码等。</p>
+<p><strong>作用</strong>：便于管理数据库连接参数的变化，将配置与代码分离，提升可维护性。</p>
+<p>​			<strong>2.向商品表中插入一个新的商品。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">insert_goods</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">des</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">uploader</span><span class="p">,</span> <span class="n">gid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    向商品表中添加一个商品项
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 上传时传入原始商品ID，若不是上传则传入&#39;-1&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param name: 商品名称，字符串类型
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param price: 商品价格，字符串类型，如 &#39;10.50&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param des: 商品描述，字符串类型
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param img: 商品图片路径，必须存放在 ../static/img/ 目录下
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param uploader: 上传者的用户名，字符串类型
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 无返回值
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span> <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取上传者的用户ID</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;select uID from user where uName=&#34;</span><span class="si">%s</span><span class="s1">&#34;&#39;</span> <span class="o">%</span> <span class="n">uploader</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uID</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用存储过程将商品信息插入数据库</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call add_upload_goods(&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;,</span><span class="si">%s</span><span class="s1">,&#34;</span><span class="si">%s</span><span class="s1">&#34;,</span><span class="si">%s</span><span class="s1">,</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">des</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">uID</span><span class="p">,</span> <span class="n">gid</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能</strong>：向数据库中插入商品信息。通过用户名获取上传者的用户ID (<code>uID</code>)，并调用存储过程<code>add_upload_goods</code>来插入商品信息。</p>
+<p><strong>注意事项</strong>：确保数据库中存在上传者的用户名，否则<code>uID</code>将导致错误。</p>
+<p>​			<strong>3.随机获取指定数量的商品信息</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_some_goods</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    从商品表中随机选择若干个商品项
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param num: 选择的商品数量
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回一个字典列表，包含选中的商品信息
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span> <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用存储过程获取推荐的商品</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call get_recommend(</span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">info</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 遍历结果，将每个商品的信息存入字典列表</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;gid&#39;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># 商品ID</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># 商品名称</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;des&#39;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>   <span class="c1"># 商品描述</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;price&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>  <span class="c1"># 商品价格，转换为字符串</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;img&#39;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>    <span class="c1"># 商品图片路径</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">info</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能</strong>：调用数据库中的存储过程<code>get_recommend</code>来随机获取指定数量的商品。</p>
+<p><strong>返回值</strong>：字典列表，其中每个字典包含商品的基本信息。</p>
+<p>​		<strong>4.验证用户ID和密码是否匹配</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">login_check</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">psw</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    查询数据库并检查用户名和密码是否匹配
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param id: 用户名（用户ID）
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param psw: 密码
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 如果匹配返回0，否则返回1；同时返回用户ID和权限等级
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span> <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 执行SQL查询，查找与给定用户名匹配的用户</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;select * from user where uName=&#34;</span><span class="si">%s</span><span class="s1">&#34;&#39;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="n">authority</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">              <span class="c1"># 如果查询结果为空，说明用户名不存在，返回1</span>
+</span></span><span class="line"><span class="cl">        <span class="n">status</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">psw</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="c1"># 如果密码匹配，返回0，并记录用户ID和权限</span>
+</span></span><span class="line"><span class="cl">        <span class="n">status</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="n">uid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">authority</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 如果密码不匹配，返回1</span>
+</span></span><span class="line"><span class="cl">        <span class="n">status</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">authority</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能</strong>：验证用户名和密码是否正确，返回状态码和用户信息。</p>
+<p><strong>注意事项</strong>：如果用户名不存在或密码不匹配，返回错误状态。</p>
+<p>​		<strong>5.插入新用户信息，默认权限等级为最低</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">insert_user</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">psw</span><span class="p">,</span> <span class="n">cps</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">tel</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">qq</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    向用户表中添加一个新用户，默认权限为1（最低权限）
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param vx: 用户的微信号
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param qq: 用户的QQ号
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param email: 用户的电子邮件
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param name: 用户的姓名
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param psw: 用户的密码
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param cps: 用户所在的校区，长安校区或友谊校区
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param sid: 用户的学号
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param tel: 用户的电话号码
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回&#39;good&#39;表示成功，返回&#39;fail&#39;表示失败
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span> <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;good&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 执行插入操作，将用户信息插入到数据库的user表中</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;insert into user(uName,uPsw,uCampus,schoolID,uTel,uVX,uQQ,uEmail) values(&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#39;</span>
+</span></span><span class="line"><span class="cl">                       <span class="s1">&#39;&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">psw</span><span class="p">,</span> <span class="n">cps</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">tel</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">qq</span><span class="p">,</span> <span class="n">email</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 如果发生异常，输出错误信息，并标记为插入失败</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;create user failed.&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;fail&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">finally</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">result</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能</strong>：添加新用户信息到<code>user</code>表中，设置默认权限。</p>
+<p><strong>注意事项</strong>：若用户名或其他约束条件冲突，会返回<code>fail</code>。</p>
+<p>​		<strong>6.获取指定商品的详细信息和评论信息</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_item_info</span><span class="p">(</span><span class="n">gid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    获取某个商品的详细信息，包括商品的基本信息和评论
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 商品的ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回两个字典，一个是商品的基本信息，一个是商品的评论信息
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span> <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="c1"># 查询商品的详细信息，包括商品的基本信息和发布者的用户名</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;select goods.*,user.uName from goods,user where gID=</span><span class="si">%d</span><span class="s1"> and goods.uploader=user.uID&#39;</span> <span class="o">%</span> <span class="n">gid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result_info</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 构建商品的基本信息字典</span>
+</span></span><span class="line"><span class="cl">    <span class="n">goods_info</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;gid&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gid</span><span class="p">),</span>  <span class="c1"># 商品ID</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">result_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># 商品名称</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;des&#39;</span><span class="p">:</span> <span class="n">result_info</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># 商品描述</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;price&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_info</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>  <span class="c1"># 商品价格</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;img_src&#39;</span><span class="p">:</span> <span class="n">result_info</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">3</span><span class="p">:],</span>  <span class="c1"># 商品图片路径，去除前缀的&#39;../&#39;</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;seller_id&#39;</span><span class="p">:</span> <span class="n">result_info</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>  <span class="c1"># 卖家ID</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;seller_name&#39;</span><span class="p">:</span> <span class="n">result_info</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>  <span class="c1"># 卖家姓名</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">result_info</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># 商品发布时间</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 查询商品的评论信息</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call get_goods_comment(</span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">gid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result_comment</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">comment_info</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">result_comment</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">comment_info</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;rid&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># 评论的回复ID，暂时没有处理</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;cid&#39;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># 评论ID</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;commenter&#39;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># 评论者用户名</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;replyto&#39;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># 被回复的评论者</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>  <span class="c1"># 评论时间</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># 评论内容</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 以下为注释掉的部分，如果需要获取评论的回复信息，可以取消注释</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># cursor.execute(&#39;call get_goods_reply(%d)&#39; % gid)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># result_reply = cursor.fetchall()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># for r in result_reply:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#     comment_info.append({</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#         &#39;rid&#39;: r[0],</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#         &#39;cid&#39;: None,</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#         &#39;commenter&#39;: r[1],</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#         &#39;replyto&#39;: r[2],</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#         &#39;time&#39;: str(r[3]),</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#         &#39;text&#39;: r[4]</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#     })</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">goods_info</span><span class="p">,</span> <span class="n">comment_info</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能</strong>：获取商品详情信息，包括评论信息。调用<code>get_goods_comment</code>存储过程以获取评论。</p>
+<p><strong>注意事项</strong>：返回结构包含商品的详细信息和评论内容。</p>
+<p>​		<strong>7.插入商品的评论信息</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">insert_comment</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">commenter</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">reply_to</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    向评论表中添加一条新评论
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 评论所属商品的ID，必须传入商品的gID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param time: 评论时间，格式为 &#39;YYYY-MM-DD HH:MM:SS&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param commenter: 评论者的用户名，必须传入uName
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param text: 评论内容
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param reply_to: 评论回复对象的用户ID，若不回复任何人，则传入空字符串
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 无返回值
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span> <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="c1"># 查询评论者的用户ID</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;select uID from user where uName=&#34;</span><span class="si">%s</span><span class="s1">&#34;&#39;</span> <span class="o">%</span> <span class="n">commenter</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uID</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"> <span class="c1"># 如果没有回复对象，设置为null</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">reply_to</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reply_to</span> <span class="o">=</span> <span class="s1">&#39;null&#39;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 调用存储过程添加评论</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call add_comment(</span><span class="si">%s</span><span class="s1">,</span><span class="si">%s</span><span class="s1">,&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">uID</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">reply_to</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能描述</strong>：<code>insert_comment</code> 用于在平台上插入商品的评论信息，将用户对商品的评论记录到数据库中。</p>
+<p><strong>作用</strong>：通过存储过程 <code>add_comment</code> 将用户的评论内容和关联商品、用户信息存入数据库，用于显示在商品的评论区域。</p>
+<p>​		<strong>8.删除指定 ID 的评论信息</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">remove_comment</span><span class="p">(</span><span class="n">cid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    删除一条评论
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param cid: 评论的ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 无返回值
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span> <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="c1"># 执行删除操作，删除指定cid的评论</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;delete from comments where cid=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能描述</strong>：<code>remove_comment</code> 函数通过 <code>comment_id</code> 从数据库中删除一条评论。</p>
+<p><strong>作用</strong>：在二手平台上提供删除评论的功能，供用户或管理员清理不当或过时的评论内容。</p>
+<p>​		<strong>9.创建新的交易记录</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">new_deal</span><span class="p">(</span><span class="n">buyer_id</span><span class="p">,</span> <span class="n">seller_id</span><span class="p">,</span> <span class="n">gid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    创建一笔新的交易，价格将设置为商品上传时的价格
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param buyer_id: 买家的用户ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param seller_id: 卖家的用户ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 商品的ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回交易是否成功的状态码，0表示成功，其他表示失败
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用存储过程创建交易，传入买家、卖家和商品ID</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call create_deal(</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, @suc)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">buyer_id</span><span class="p">,</span> <span class="n">seller_id</span><span class="p">,</span> <span class="n">gid</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># 提交事务</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取存储过程的返回值，判断交易是否成功</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;select @suc&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ret</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭游标</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭数据库连接</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># 返回交易结果，0表示成功</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能描述</strong>：<code>new_deal</code> 用于在商品被购买时创建交易记录。</p>
+<p><strong>作用</strong>：在平台上保存商品交易信息，为后续的订单管理、交易记录查询提供数据支持。</p>
+<p>​		<strong>10.获取用户的个人信息、交易信息、收藏和上传的商品</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_user_info</span><span class="p">(</span><span class="n">userid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    根据当前用户ID，返回与用户相关的所有交易和信息
+</span></span></span><span class="line"><span class="cl"><span class="s2">    TODO: 添加用户的收藏功能
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param userid: 用户的ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回4个字典，分别是用户信息、用户上传商品、用户交易记录、用户收藏
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取用户基本信息并封装成字典</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;select * from user where uID=&#34;</span><span class="si">%s</span><span class="s1">&#34;&#39;</span> <span class="o">%</span> <span class="n">userid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">res_info</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;uid&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># 用户ID</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># 用户姓名</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;sid&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>  <span class="c1"># 学号</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;campus&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>  <span class="c1"># 所在校园</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;tel&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>  <span class="c1"># 电话号码</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;vx&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>  <span class="c1"># 微信号</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;qq&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>  <span class="c1"># QQ号</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>  <span class="c1"># 邮箱</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;aut&#39;</span><span class="p">:</span> <span class="n">res_info</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>  <span class="c1"># 用户权限</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取用户的交易记录并封装成字典数组</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call get_user_deal(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">userid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">res_deal</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">deals</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">res_deal</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">deal_item</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;gid&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># 商品ID</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;seller_id&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># 卖家ID</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;buyer_id&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># 买家ID</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>  <span class="c1"># 交易时间</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;price&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>  <span class="c1"># 交易价格</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>  <span class="c1"># 交易状态</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;goods_name&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>  <span class="c1"># 商品名称</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;seller_name&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>  <span class="c1"># 卖家姓名</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;buyer_name&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>  <span class="c1"># 买家姓名</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">deals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deal_item</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取用户的收藏信息</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call get_user_fav(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">userid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">res_fav</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fav</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">res_fav</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">fav</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;gid&#39;</span><span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># 商品ID</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;gName&#39;</span><span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># 商品名称</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;fTime&#39;</span><span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># 收藏时间</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;seller&#39;</span><span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># 卖家ID</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获取用户上传的商品</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call get_user_upload(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">userid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">res_up</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">up</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">res_up</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">up</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;gid&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># 商品ID</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;gName&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># 商品名称</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;gPrice&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># 商品价格</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># 上传时间</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭游标</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭数据库连接</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">info</span><span class="p">,</span> <span class="n">up</span><span class="p">,</span> <span class="n">deals</span><span class="p">,</span> <span class="n">fav</span>  <span class="c1"># 返回用户信息、上传商品、交易记录和收藏信息</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能描述</strong>：<code>get_user_info</code> 函数获取指定用户的所有信息。</p>
+<p><strong>作用</strong>：该函数用于显示用户主页，包括用户信息、交易记录、收藏列表和已上传商品等内容。</p>
+<p>​		<strong>11.修改交易记录的状态或价格</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">modify_deal</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">buyer</span><span class="p">,</span> <span class="n">seller</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    修改一笔交易，按给定的gid、买家ID和卖家ID进行索引
+</span></span></span><span class="line"><span class="cl"><span class="s2">    合法的操作（op）值有：remove（删除交易）、status（修改状态）、price（修改价格）
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 商品ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param buyer: 买家用户ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param seller: 卖家用户ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param op: 操作类型（remove, status, price）
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param text: 设置操作的目标值（如状态、价格等）
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 无返回值
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 构建存储过程的调用语句，执行修改交易的操作</span>
+</span></span><span class="line"><span class="cl">    <span class="n">q</span> <span class="o">=</span> <span class="s1">&#39;call modify_deal(</span><span class="si">%s</span><span class="s1">,</span><span class="si">%s</span><span class="s1">,</span><span class="si">%s</span><span class="s1">,&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">seller</span><span class="p">,</span> <span class="n">buyer</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># 打印SQL查询语句，供调试时使用</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># 执行修改交易的存储过程</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># 提交事务</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭游标</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭数据库连接</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>功能描述</strong>：<code>modify_deal</code> 用于更新交易记录的状态或价格。</p>
+<p><strong>作用</strong>：支持管理员或卖家修改交易信息，如更新订单状态或重新定价。</p>
+<p>​		<strong>12.添加用户收藏</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">insert_favorites</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">gid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    将商品添加到用户的收藏夹中
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param uid: 用户ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 商品ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回操作结果信息，成功时返回&#34;收藏成功&#34;，失败时返回&#34;已在收藏夹中，不能重复收藏&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">rt</span> <span class="o">=</span> <span class="s1">&#39;收藏成功&#39;</span>  <span class="c1"># 默认返回成功消息</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 调用存储过程将商品添加到用户的收藏夹</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call add_fav(&#34;</span><span class="si">%s</span><span class="s1">&#34;,&#34;</span><span class="si">%s</span><span class="s1">&#34;)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">gid</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># 提交事务</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>  <span class="c1"># 打印异常信息</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rt</span> <span class="o">=</span> <span class="s1">&#39;已在收藏夹中，不能重复收藏&#39;</span>  <span class="c1"># 如果发生异常，说明商品已经在收藏夹中</span>
+</span></span><span class="line"><span class="cl">    <span class="k">finally</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭游标</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭数据库连接</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">rt</span>  <span class="c1"># 返回操作结果</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​		<strong>13.从商品表中删除指定商品</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">remove_goods</span><span class="p">(</span><span class="n">gid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    从商品表中删除指定商品
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 商品ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回删除结果信息，成功时返回&#34;删除成功&#34;，失败时返回&#34;删除失败，有相关交易&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 调用存储过程删除商品</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;call remove_goods(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">gid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># 提交事务</span>
+</span></span><span class="line"><span class="cl">    <span class="n">res</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>  <span class="c1"># 获取存储过程的返回结果</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>  <span class="c1"># 打印返回结果，供调试使用</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 根据存储过程返回的结果判断删除是否成功</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rt</span> <span class="o">=</span> <span class="s1">&#39;删除成功&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rt</span> <span class="o">=</span> <span class="s1">&#39;删除失败，有相关交易&#39;</span>  <span class="c1"># 如果返回结果不为1，说明有相关交易，删除失败</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭游标</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭数据库连接</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">rt</span>  <span class="c1"># 返回操作结果</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​		<strong>14.从用户的收藏夹中移除指定商品</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">remove_favorites</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">gid</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    从用户的收藏夹中移除指定商品
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param uid: 用户ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param gid: 商品ID
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回删除结果信息，成功时返回&#34;删除成功&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># 从收藏表中删除指定用户和商品的记录</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;delete from favorites where uid=</span><span class="si">%s</span><span class="s1"> and gid=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">gid</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># 提交事务</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭游标</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭数据库连接</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s1">&#39;删除成功&#39;</span>  <span class="c1"># 返回操作结果</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​	<strong>15.修改用户信息</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">modify_info</span><span class="p">(</span><span class="n">info</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    修改用户信息
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :param info: 包含用户信息的字典，包含uID（用户ID）和需要修改的其他字段
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: 返回操作结果信息，成功时返回&#34;修改成功&#34;，失败时返回&#34;用户名已存在&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3340</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">),</span> <span class="n">user</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">charset</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MySQL&#39;</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">rt</span> <span class="o">=</span> <span class="s1">&#39;修改成功&#39;</span>  <span class="c1"># 默认返回成功消息</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;start transaction&#39;</span><span class="p">)</span>  <span class="c1"># 开始事务</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 更新用户名</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;update user set uName=&#34;</span><span class="si">%s</span><span class="s1">&#34; where uID=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;uName&#39;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;uID&#39;</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 遍历并更新其他字段（排除uID和uName）</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">item</span> <span class="o">!=</span> <span class="s1">&#39;uID&#39;</span> <span class="ow">and</span> <span class="n">item</span> <span class="o">!=</span> <span class="s1">&#39;uName&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;update user set </span><span class="si">%s</span><span class="s1">=&#34;</span><span class="si">%s</span><span class="s1">&#34; where uID=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;uID&#39;</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># 提交事务</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>  <span class="c1"># 打印异常信息</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>  <span class="c1"># 如果发生异常，回滚事务</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rt</span> <span class="o">=</span> <span class="s1">&#39;用户名已存在&#39;</span>  <span class="c1"># 如果发生异常，可能是用户名已存在</span>
+</span></span><span class="line"><span class="cl">    <span class="k">finally</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭游标</span>
+</span></span><span class="line"><span class="cl">        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭数据库连接</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">rt</span>  <span class="c1"># 返回操作结果</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​</p>
+<p>​</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Mar 21, 2025 16:32 UTC
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script
+    src="https://giscus.app/client.js"
+    data-repo="1878247293/1878247293.github.io"
+    data-repo-id="R_kgDONMr1fg"
+    data-category="Announcements"
+    data-category-id="DIC_kwDONMr1fs4CkNCD"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="zh-CN"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+></script>
+<script>
+    function setGiscusTheme(theme) {
+        let giscus = document.querySelector("iframe.giscus-frame");
+        if (giscus) {
+            giscus.contentWindow.postMessage(
+                {
+                    giscus: {
+                        setConfig: {
+                            theme: theme,
+                        },
+                    },
+                },
+                "https://giscus.app"
+            );
+        }
+    }
+
+    (function () {
+        addEventListener("message", (e) => {
+            if (event.origin !== "https://giscus.app") return;
+            handler();
+        });
+        window.addEventListener("onColorSchemeChange", handler);
+
+        function handler() {
+            if (document.documentElement.dataset.scheme === "light") {
+                setGiscusTheme('light');
+            } else {
+                setGiscusTheme('dark_dimmed');
+            }
+        }
+    })();
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 明天再见
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<div id="aplayer"></div>
+
+<script>
+	const home = "https://1878247293.github.io/"
+	const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+	
+    audio: [{
+        name: '天下有情人',
+        artist: '周华健',
+        url: home+'music/天下有情人-周华健/song.mp3',
+        cover: home+'music/天下有情人-周华健/cover.jpg',
+		 
+    },
+	{
+		
+	}]
+});
+</script>
+<style>
+  body {
+    background: url(https://1878247293.github.io/background/7nzi4hch.png) no-repeat center top;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+</style>
+<script src=https://1878247293.github.io/background/sakura.js></script>
+<div id="particles-js"></div>
+
+<script src=https://1878247293.github.io/background/particles.min.js></script>
+<script>
+  particlesJS.load('particles-js', "https://1878247293.github.io/background/particlesjs-config.json", function() {
+    console.log('particles.js loaded - callback');
+  });
+</script>
+
+<style>
+  #particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+  }
+</style>
+
+
+<script>
+const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+const cssPath = "https://1878247293.github.io/waifu/waifu.css"
+const waifujosnPath = "https://1878247293.github.io/waifu/waifu-tips.json"
+const live2dPath = "https://1878247293.github.io/waifu/live2d.min.js"
+
+function loadExternalResource(url, type) {
+	return new Promise((resolve, reject) => {
+		let tag;
+
+		if (type === "css") {
+			tag = document.createElement("link");
+			tag.rel = "stylesheet";
+			tag.href = url;
+		}
+		else if (type === "js") {
+			tag = document.createElement("script");
+			tag.src = url;
+		}
+		if (tag) {
+			tag.onload = () => resolve(url);
+			tag.onerror = () => reject(url);
+			document.head.appendChild(tag);
+		}
+	});
+}
+
+
+if (screen.width >= 768) {
+	Promise.all([
+		loadExternalResource(cssPath, "css"),
+		loadExternalResource(live2dPath, "js"),
+		loadExternalResource(live2d_path + "waifu-tips.js", "js")
+	]).then(() => {
+		
+		initWidget({
+			waifuPath: waifujosnPath,
+			
+			cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+			tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+		});
+		initWaifuMouseEvent();
+	});
+}
+function initWaifuMouseEvent() {
+        const waifu = document.getElementById("waifu");
+        let isDown = false;
+        let waifuLeft;
+        let mouseLeft;
+        let waifuTop;
+        let mouseTop;
+        
+        waifu.onmousedown = function (e) {
+            isDown = true;
+            
+            waifuLeft = waifu.offsetLeft;
+            mouseLeft = e.clientX;
+            
+            waifuTop = waifu.offsetTop;
+            mouseTop = e.clientY;
+        }
+        
+        window.onmousemove = function (e) {
+            if (!isDown) {
+                return;
+            }
+            
+            let currentLeft = waifuLeft + (e.clientX - mouseLeft);
+            if (currentLeft < 0) {
+                currentLeft = 0;
+            } else if (currentLeft > window.innerWidth - 300) {
+                currentLeft = window.innerWidth - 300;
+            }
+            waifu.style.left = currentLeft  + "px";
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+        
+        window.onmouseup = function (e) {
+            isDown = false;
+        }
+    }
+</script>
+
+
+
+
+
+    </body>
+</html>

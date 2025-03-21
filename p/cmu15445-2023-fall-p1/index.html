@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="项目网址： Project #1 - Buffer Pool | CMU 15-445/645 :: Intro to Database Systems (Fall 2023)\n在进行下列任务时可以先学习一些前置知识点： 缓存替换策略：LRU-K算法详解及其C++实现 CMU15-445 Project#1-CSDN博客https://blog.csdn.net/EQUINOX1/article/details/134897555)\n">
+<title>cmu15445 2023 fall   p1</title>
+
+<link rel='canonical' href='https://1878247293.github.io/p/cmu15445-2023-fall-p1/'>
+
+<link rel="stylesheet" href="/scss/style.min.35b5cf656aeed6866c8c29f06538873b76aac06fc1c8c993b42ce1408b061e7a.css"><meta property='og:title' content="cmu15445 2023 fall   p1">
+<meta property='og:description' content="项目网址： Project #1 - Buffer Pool | CMU 15-445/645 :: Intro to Database Systems (Fall 2023)\n在进行下列任务时可以先学习一些前置知识点： 缓存替换策略：LRU-K算法详解及其C++实现 CMU15-445 Project#1-CSDN博客https://blog.csdn.net/EQUINOX1/article/details/134897555)\n">
+<meta property='og:url' content='https://1878247293.github.io/p/cmu15445-2023-fall-p1/'>
+<meta property='og:site_name' content='明天再见个人博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-11T15:29:00&#43;08:00'/><meta property='article:modified_time' content='2025-03-21T21:48:57&#43;08:00'/>
+<meta name="twitter:title" content="cmu15445 2023 fall   p1">
+<meta name="twitter:description" content="项目网址： Project #1 - Buffer Pool | CMU 15-445/645 :: Intro to Database Systems (Fall 2023)\n在进行下列任务时可以先学习一些前置知识点： 缓存替换策略：LRU-K算法详解及其C++实现 CMU15-445 Project#1-CSDN博客https://blog.csdn.net/EQUINOX1/article/details/134897555)\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu6528894822542699760.png" width="300"
+                            height="236" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">明天再见个人博客</a></h1>
+            <h2 class="site-description">欢迎来到我的网站</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/366783890?spm_id_from=333.1007.0.0'
+                        target="_blank"
+                        title="Bilibili"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/dashboard'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#任务-1---lru-k-更换政策">任务 #1 - LRU-K 更换政策</a></li>
+    <li><a href="#任务-2---磁盘调度程序">任务 #2 - 磁盘调度程序</a></li>
+    <li><a href="#任务-3---缓冲池管理器">任务 #3 - 缓冲池管理器</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/cmu15445-2023-fall-p1/">cmu15445 2023 fall   p1</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 11, 2024</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 15 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>项目网址：
+<a class="link" href="https://15445.courses.cs.cmu.edu/fall2023/project1/"  target="_blank" rel="noopener"
+    >Project #1 - Buffer Pool | CMU 15-445/645 :: Intro to Database Systems (Fall 2023)</a></p>
+<p>在进行下列任务时可以先学习一些前置知识点：
+<a class="link" href="https://blog.csdn.net/AntiO2/article/details/128439155"  target="_blank" rel="noopener"
+    >缓存替换策略：LRU-K算法详解及其C++实现 CMU15-445 Project#1-CSDN博客</a><a class="link" href="https://blog.csdn.net/EQUINOX1/article/details/134897555"  target="_blank" rel="noopener"
+    >https://blog.csdn.net/EQUINOX1/article/details/134897555</a>)</p>
+<p>在数据库系统中，框架（Frame）和页面（Page）是两个密切相关的概念，它们在内存管理和数据存储中扮演着不同的角色。下面我将详细解释它们之间的关系：</p>
+<p><strong>页面（Page）</strong></p>
+<p>页面是数据库系统中数据存储的基本单位。每个页面通常具有相同的大小，例如 4KB、8KB 等。页面可以包含表数据、索引数据或其他类型的数据库对象。页面是数据库系统中数据的逻辑表示，是数据在磁盘和内存之间的传输单位。</p>
+<p><strong>框架（Frame）</strong></p>
+<p>框架是内存中用于存储页面的物理位置。框架是内存管理的基本单位，每个框架可以存储一个页面。框架的大小与页面的大小相同，通常是固定的。</p>
+<h2 id="任务-1---lru-k-更换政策">任务 #1 - LRU-K 更换政策
+</h2><p><strong>LRU-K是在LRU 的基础上，出现次数小于K的，时间按无穷大算，反之，按倒数第k次出现的时间算。依次我们只需要建立俩个表，小于k的放到表1，采用先进先出的方式进行淘汰，大等于k的放在表二，并且记录k次的出现时间，采用LRU的策略进行淘汰。</strong></p>
+<p><strong>先在.h文件中添加以下定义变量：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl">  <span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">size_t</span><span class="o">&gt;</span> <span class="n">history_</span><span class="p">;</span>  <span class="c1">// 存储最近的K个时间戳历史记录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">size_t</span> <span class="n">k_</span><span class="p">;</span>                   <span class="c1">// K值，表示最近访问的历史记录数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">frame_id_t</span> <span class="n">fid_</span><span class="p">;</span>             <span class="c1">// 框架ID，表示页面ID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">bool</span> <span class="n">is_evictable_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>   <span class="c1">// 是否可淘汰
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="nf">GetBackKTimeStamp</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">history_</span><span class="p">.</span><span class="n">front</span><span class="p">();</span> <span class="p">}</span>   <span class="c1">// 获取最早的K个时间戳
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">auto</span> <span class="nf">GetLatestTimeStamp</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">history_</span><span class="p">.</span><span class="n">front</span><span class="p">();</span> <span class="p">}</span>  <span class="c1">// 获取最新的时间戳
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl">    <span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">frame_id_t</span><span class="p">,</span> <span class="n">LRUKNode</span><span class="o">&gt;</span> <span class="n">node_store_</span><span class="p">;</span>  <span class="c1">// 存储LRUK节点的哈希表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">size_t</span> <span class="n">current_timestamp_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>                          <span class="c1">// 当前时间戳
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">size_t</span> <span class="n">current_size_</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>                               <span class="c1">// 当前大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">size_t</span> <span class="n">replacer_size_</span><span class="p">;</span>                                 <span class="c1">// 替换器大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">size_t</span> <span class="n">k_</span><span class="p">;</span>                                             <span class="c1">// k值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">latch_</span><span class="p">;</span>                                     <span class="c1">// 互斥量，用于保护并发访问
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>Task 1一共需要我们完成如下五个函数，也就是上面提到的缓冲池内部对frame的具体操作：</strong></p>
+<p><em><em>Evict(frame_id_t</em> frame_id) ：</em>*</p>
+<p><strong>Size() :</strong></p>
+<p><strong>RecordAccess(frame_id_t frame_id) :</strong></p>
+<p><strong>Remove(frame_id_t frame_id) :</strong></p>
+<p><strong>SetEvictable(frame_id_t frame_id, bool set_evictable) :</strong></p>
+<p>建议跟着我的顺序完成五个函数：</p>
+<p><strong>1 Size() :</strong>
+直接返回当前的curr_size即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">LRUKReplacer</span><span class="o">::</span><span class="n">Size</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">size_t</span> <span class="c1">//{ return 0; }
+</span></span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span> <span class="k">return</span> <span class="n">current_size_</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>2 RecordAccess :</strong>
+RecordAccess 方法的主要功能是记录缓存帧的访问，依据 LRU-K 算法更新帧的访问历史和状态。该方法通过判断帧的访问次数，决定该帧是留在未满 K 次访问的队列，还是移入满 K 次访问的队列。</p>
+<p>具体实现思路为：</p>
+<p>1.更新访问时间戳current_timestamp_和访问次数recorded_cnt_[frame_id]</p>
+<p>2.对访问次数进行判断，若是第一次访问：先更新相关记录标志，如 evictable，curr_size等等，然后将其加入new_frame，即未满K次队列</p>
+<p>3.若访问次数达到K次：首先从 new_frame_ 中删除该帧及其位置信息，取出该帧在 hist_ 中的第一个时间戳（即第 K 次访问时的时间），将帧插入 cache_frame_。</p>
+<p>这里要注意：cache_frame_ 是一个按时间戳有序的队列，要保证插入后仍然有序。</p>
+<p>4.访问次数超过 K：如果该帧的访问次数超过 K，则需要更新 cache_frame_ 中该帧的时间戳。</p>
+<p>这里同样要注意：我们只保留最近 K 次的访问记录，所以首先删除该帧在 hist_ 中最早的访问时间戳；其次，还要按照新的时间将该帧戳重新插入到 cache_frame_ 中，并更新该帧在 cache_frame_ 中的位置信息，保证cache_frame_ 按时间戳有序。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">LRUKReplacer</span><span class="o">::</span><span class="n">RecordAccess</span><span class="p">(</span><span class="n">frame_id_t</span> <span class="n">frame_id</span><span class="p">,</span> <span class="na">[[maybe_unused]]</span> <span class="n">AccessType</span> <span class="n">access_type</span><span class="p">)</span><span class="c1">// {}
+</span></span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">helper</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">BUSTUB_ASSERT</span><span class="p">(</span><span class="n">helper</span> <span class="o">&lt;=</span> <span class="n">replacer_size_</span><span class="p">,</span> <span class="s">&#34;invalid frame_id&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">node_store_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">==</span> <span class="n">node_store_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Fail to find out the LRUKNode.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">auto</span> <span class="n">new_node_ptr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">LRUKNode</span><span class="o">&gt;</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">access_type</span> <span class="o">!=</span> <span class="n">AccessType</span><span class="o">::</span><span class="n">Scan</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">new_node_ptr</span><span class="o">-&gt;</span><span class="n">history_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">current_timestamp_</span><span class="o">++</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">node_store_</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_pair</span><span class="p">(</span><span class="n">frame_id</span><span class="p">,</span> <span class="o">*</span><span class="n">new_node_ptr</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="o">&amp;</span><span class="n">node</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">access_type</span> <span class="o">!=</span> <span class="n">AccessType</span><span class="o">::</span><span class="n">Scan</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">history_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">k_</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">node</span><span class="p">.</span><span class="n">history_</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="n">node</span><span class="p">.</span><span class="n">history_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">current_timestamp_</span><span class="o">++</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>3 Evict：</strong>
+完成并理解RecordAccess之后，Evict 就很容易了：</p>
+<p>1.先在未满 K 次队列进行驱逐：这里注意，new_frame队列用的数据结构是list，所以我们可以采取LRU策略，从后往前遍历，找到可驱逐帧，然后将相关标志量处理以完成驱逐操作，这里也有 evictable_[frame]进行辅助判断，很简单。当然，new_frame队列中的驱逐策略很多选，大家选择合适的喜欢的即可。</p>
+<p>2.在满k队列中进行驱逐： 得益于之前我们悉心维护cache_frame队列的“按时间戳有序”特性，这里的驱逐只需从前往后遍历，按上一步的操作进行具体驱逐即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">LRUKReplacer</span><span class="o">::</span><span class="n">Evict</span><span class="p">(</span><span class="n">frame_id_t</span> <span class="o">*</span><span class="n">frame_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="c1">// { return false; }
+</span></span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>  <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">size_t</span> <span class="n">largest_bkd</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">size_t</span> <span class="n">largest_distance</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="n">success_evict</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="n">is_inf</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">LRUKNode</span> <span class="o">*</span><span class="n">evict_node_ptr</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="nl">pair</span> <span class="p">:</span> <span class="n">node_store_</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">auto</span> <span class="o">&amp;</span><span class="n">node</span> <span class="o">=</span> <span class="n">pair</span><span class="p">.</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">node</span><span class="p">.</span><span class="n">is_evictable_</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">continue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="n">success_evict</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">history_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="o">*</span><span class="n">frame_id</span> <span class="o">=</span> <span class="n">pair</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">evict_node_ptr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">node</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">history_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">k_</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">is_inf</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">auto</span> <span class="n">current_bkd</span> <span class="o">=</span> <span class="n">current_timestamp_</span> <span class="o">-</span> <span class="n">node</span><span class="p">.</span><span class="n">GetBackKTimeStamp</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">current_bkd</span> <span class="o">&gt;</span> <span class="n">largest_bkd</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">largest_bkd</span> <span class="o">=</span> <span class="n">current_bkd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="o">*</span><span class="n">frame_id</span> <span class="o">=</span> <span class="n">pair</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">evict_node_ptr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">node</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">history_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">k_</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">is_inf</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">auto</span> <span class="n">current_distance</span> <span class="o">=</span> <span class="n">current_timestamp_</span> <span class="o">-</span> <span class="n">node</span><span class="p">.</span><span class="n">GetLatestTimeStamp</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">current_distance</span> <span class="o">&gt;</span> <span class="n">largest_distance</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">largest_distance</span> <span class="o">=</span> <span class="n">current_distance</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="o">*</span><span class="n">frame_id</span> <span class="o">=</span> <span class="n">pair</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">evict_node_ptr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">node</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">success_evict</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">current_size_</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">evict_node_ptr</span><span class="o">-&gt;</span><span class="n">history_</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="n">node_store_</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="o">*</span><span class="n">frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">success_evict</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>4 SetEvictable(frame_id_t frame_id, bool set_evictable) :</strong>
+这个简单，按传进来的bool参数，把可驱逐的设置成不可驱逐，把不可驱逐的设置成可驱逐即可。</p>
+<p>只是别恰巧搞混了（别问我为什么要这么说）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">LRUKReplacer</span><span class="o">::</span><span class="n">SetEvictable</span><span class="p">(</span><span class="n">frame_id_t</span> <span class="n">frame_id</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">set_evictable</span><span class="p">)</span> <span class="c1">//{}
+</span></span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">helper</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">BUSTUB_ASSERT</span><span class="p">(</span><span class="n">helper</span> <span class="o">&lt;=</span> <span class="n">replacer_size_</span><span class="p">,</span> <span class="s">&#34;invalid frame_id&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">LRUKNode</span><span class="o">&gt;</span> <span class="n">new_node_ptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">node_store_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">==</span> <span class="n">node_store_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Fail to find out the LRUKNode.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">new_node_ptr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">LRUKNode</span><span class="o">&gt;</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">node_store_</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_pair</span><span class="p">(</span><span class="n">frame_id</span><span class="p">,</span> <span class="o">*</span><span class="n">new_node_ptr</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="o">&amp;</span><span class="n">node</span> <span class="o">=</span> <span class="p">(</span><span class="n">iter</span> <span class="o">==</span> <span class="n">node_store_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="o">?</span> <span class="o">*</span><span class="nl">new_node_ptr</span> <span class="p">:</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">set_evictable</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">node</span><span class="p">.</span><span class="n">is_evictable_</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">node</span><span class="p">.</span><span class="n">is_evictable_</span> <span class="o">=</span> <span class="n">set_evictable</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">current_size_</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">set_evictable</span> <span class="o">&amp;&amp;</span> <span class="n">node</span><span class="p">.</span><span class="n">is_evictable_</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">node</span><span class="p">.</span><span class="n">is_evictable_</span> <span class="o">=</span> <span class="n">set_evictable</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">current_size_</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>5 Remove :</strong>
+这里先补充一下Remove 和 Evict 的区别：看着好像都是“去除，删除”的意思。但主要区别在于使用场景不同：</p>
+<p>一般当缓冲池的空间不足，需要加载新的页面（frame）时，会调用Evict函数来腾出空间，而Remove 函数用于显式地移除指定的页面，前提是该页面可以被驱逐（即是可驱逐的，并且存在于缓存中）。（如果这里的字面解释你还看不太懂，可以跳到后面Task 3 的部分，找两个函数的具体应用场景，就很容易理解了）</p>
+<p>那么具体的实现思路如下：</p>
+<p>1.首先检查输入合法性，frame_id的范围等等，最重要的，要主动Remove的帧必须首先是可驱逐的。然后判断该帧访问次数cnt。</p>
+<p>2.若cnt &lt; k，则在new_frame队列中删除，若cnt &gt;= k，则在cache_frame队列中删除。</p>
+<p>到这里，task1就完成了，主要难度还是在理解整体架构，维护数据结构上，有了顶层概念以后，具体实现就都是按部就班，没什么额外难度。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">LRUKReplacer</span><span class="o">::</span><span class="n">Remove</span><span class="p">(</span><span class="n">frame_id_t</span> <span class="n">frame_id</span><span class="p">)</span><span class="c1">// {}
+</span></span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">node_store_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">==</span> <span class="n">node_store_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="o">&amp;</span><span class="n">node</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">BUSTUB_ASSERT</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">is_evictable_</span><span class="p">,</span> <span class="s">&#34;Called on a non-evictable frame.&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">node</span><span class="p">.</span><span class="n">history_</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">node_store_</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">current_size_</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="任务-2---磁盘调度程序">任务 #2 - 磁盘调度程序
+</h2><p>这里类似实现的是用请求队列来对请求排序，实现单线程按顺序处理请求。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="err">其他组件（在本例中为任务</span><span class="w"> </span><span class="c1">#3）可以使用磁盘调度程序对磁盘请求进行排队，由结构体（已在 `src/include/storage/disk/disk_scheduler.h` 中定义）表示。磁盘调度程序将维护一个后台工作线程，该线程负责处理计划的请求。`BufferPoolManager``DiskRequest`
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>1.后台异步线程</strong>
+后台线程用于异步执行某些操作而不阻塞主线程。通过启动一个后台线程异步处理磁盘请求，实现了生产者-消费者模型：</p>
+<p>​				Schedule 方法相当于生产者，将磁盘请求放入队列。
+​				StartWorkerThread 方法相当于消费者，从队列中取出请求并执行实际的磁盘读写操作。
+​				通过 std::optional 来管理请求队列，使用 std::nullopt 作为特殊信号来停止后台线程。
+​				异步线程通常用于需要执行耗时任务的场景（比如磁盘读写操作），而主线程可以继续执行其他任务。这种方式通过并行处理提高了程序的性能。</p>
+<p><strong>2.std::optional</strong>
+std::optional 是 C++17 引入的一个标准库类型，它用于表示一个值可能存在或不存在的情况。可以把它看作是一个可以为空的值的包装器，类似于指针，但是更安全和简洁。</p>
+<p>​				如果 std::optional 包含值，可以通过 has_value() 来检查是否有值，或者使用 operator bool() 检查。</p>
+<p>​				如果值不存在，可以用 std::nullopt 来表示。</p>
+<p><strong>3.emplace</strong>
+emplace 是一种避免临时对象构造的方法，能够在容器中“原地构造”对象，避免不必要的拷贝操作，提高性能。具体到此处：emplace方法直接在std::thread对象内部构造线程，而不需要先创建一个线程对象然后再赋值给std::thread。它接受与构造函数相同的参数，并直接用于初始化线程对象。</p>
+<p><strong>4.lambda 表达式和 [&amp;]</strong>
+lambda 表达式是 C++11 引入的用于定义匿名函数的特性，它使得我们可以在函数内部定义和传递小型的、临时的函数。</p>
+<p>​				lambda 表达式的基本形式为：</p>
+<p><a class="link" href="parameters" > capture </a> -&gt; return_type { body }</p>
+<p>capture 是捕获列表，用于指定 lambda 可以访问哪些外部变量：</p>
+<p>[&amp;]：按引用捕获所有外部变量，可以在 lambda 中修改这些变量。</p>
+<p>[=]：按值捕获所有外部变量，仅能在 lambda 内读取这些变量。</p>
+<p>[x]：按值捕获变量 x。</p>
+<p>[&amp;x]：按引用捕获变量 x。</p>
+<p>capture 捕获完成后，body中应用这些捕获到的变量进行具体操作。</p>
+<p><strong>5.函数实现：</strong>
+<strong>1.Schedule 方法：</strong>
+Schedule 方法用于向 request_queue_ 中添加一个磁盘请求 DiskRequest，实现请求的调度，直接put就行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">DiskScheduler</span><span class="o">::</span><span class="n">Schedule</span><span class="p">(</span><span class="n">DiskRequest</span> <span class="n">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">request_queue_</span><span class="p">.</span><span class="n">Put</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">r</span><span class="p">));</span><span class="c1">//将请求 r 放入请求队列中。std::move 用于将请求的所有权转移给队列。
+</span></span></span><span class="line"><span class="cl"><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>​		<strong>2.StartWorkerThread 方法：</strong>
+StartWorkerThread 是一个在后台线程中运行的函数，负责从队列中获取磁盘请求并执行读写操作。判断队列中的每一个请求类型，然后调用channel.h中的读写函数完成操作即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">DiskScheduler</span><span class="o">::</span><span class="n">StartWorkerThread</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">//用于存储从队列中获取的请求。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">DiskRequest</span><span class="o">&gt;</span> <span class="n">request</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">//从请求队列中获取请求，直到获取到 std::nullopt
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">while</span> <span class="p">((</span><span class="n">request</span> <span class="o">=</span> <span class="n">request_queue_</span><span class="p">.</span><span class="n">Get</span><span class="p">()))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">-&gt;</span><span class="n">is_write_</span><span class="p">)</span> <span class="p">{</span><span class="c1">// 如果请求有效，处理请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">disk_manager_</span><span class="o">-&gt;</span><span class="n">WritePage</span><span class="p">(</span><span class="n">request</span><span class="o">-&gt;</span><span class="n">page_id_</span><span class="p">,</span> <span class="n">request</span><span class="o">-&gt;</span><span class="n">data_</span><span class="p">);</span><span class="c1">//如果请求是写操作，调用 disk_manager_-&gt;WritePage 写入页面。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">request</span><span class="o">-&gt;</span><span class="n">callback_</span><span class="p">.</span><span class="n">set_value</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span><span class="c1">//设置回调函数的值，表示操作完成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">continue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 如果请求是读操作，调用 disk_manager_-&gt;ReadPage 读取页面。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">disk_manager_</span><span class="o">-&gt;</span><span class="n">ReadPage</span><span class="p">(</span><span class="n">request</span><span class="o">-&gt;</span><span class="n">page_id_</span><span class="p">,</span> <span class="n">request</span><span class="o">-&gt;</span><span class="n">data_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="n">request</span><span class="o">-&gt;</span><span class="n">callback_</span><span class="p">.</span><span class="n">set_value</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span><span class="c1">//和这个promise 有关 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="任务-3---缓冲池管理器">任务 #3 - 缓冲池管理器
+</h2><p>​		Task #3是宏观上调用控制各个部分,也就是通过调用task1和task2所涉及到的代码，来实现缓冲池管理器，其中，task1是关于内存处的替换策略，task2是关于对磁盘进行处理的请求处理。</p>
+<p>​		利用page_table对缓冲池进行操作，利用disk_scheduler后台异步线程处理磁盘读写。</p>
+<p>​		那么只要脑子里有上图这个宏观架构，我们就只需要按照注释一步步实现Task 3中的6个函数即可：</p>
+<p><strong>1.相关知识补课：</strong>
+1.std::scoped_lock：
+这里半途了解到std::scoped_lock，就和之前用的std::lock_guard区别一下：</p>
+<p>​		std::scoped_lock：</p>
+<p>​			可以同时锁定多个互斥锁。</p>
+<p>​			它通过可变参数模板的方式，可以同时锁住多个互斥锁，避免手动嵌套锁定多个互斥锁时可能引发的死锁问题。</p>
+<p>​			它内部会自动使用 std::lock()，保证多个锁按正确的顺序同时加锁，防止死锁。</p>
+<p>​		std::lock_guard<a class="link" href="std::mutex" >std::mutex</a>：</p>
+<p>​			只能锁定单个互斥锁。</p>
+<p>​			如果需要锁定多个互斥锁，需要手动嵌套多个 lock_guard，这会引入死锁风险，尤其是如果锁的顺序不一致的情况下。</p>
+<p>​	2.std::future和std::promise
+​	由于task2中采用了后台异步多线程的操作，那么我们在调用的时候，也要采用异步线程操作。</p>
+<p>​			具体学习看这篇：</p>
+<p>​				<a class="link" href="https://blog.csdn.net/guotianqing/article/details/103770992"  target="_blank" rel="noopener"
+    >c++11多线程编程同步——使用future和promise_c++ future同步超时-CSDN博客</a></p>
+<p><strong>2.Flush page</strong>(刷新，即写回磁盘)
+FlushPage 函数的主要功能是：</p>
+<p>​		将指定 page_id 对应的页面从缓冲池写回磁盘。</p>
+<p>​		如果该页面没有发生过修改（即不是脏页），则不执行写回操作。</p>
+<p>​		在写回操作后，页面的脏标志位被重置为 false。</p>
+<p>​		这里重点解析一下异步写入调度：</p>
+<p>​			创建一个 promise 对象，用于通知主线程磁盘写入操作的结果。promise 与 future 相互关联，主线程可以通过 future.get() 来等待异步操作的结果。</p>
+<p>​			调用 disk_scheduler_-&gt;Schedule() 方法，将页面的写入任务提交给后台异步线程处理。Schedule() 方法会构造一个磁盘请求对象 DiskRequest，表示将该页面的数据写入磁盘，并将其调度到 DiskScheduler 的后台线程执行。</p>
+<p>​			future.get() 会阻塞主线程，直到后台线程完成写入任务，确保页面写入磁盘操作已经完成。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// 刷新页面
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">auto</span> <span class="n">BufferPoolManager</span><span class="o">::</span><span class="n">FlushPage</span><span class="p">(</span><span class="n">page_id_t</span> <span class="n">page_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="c1">//{ return false; }
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">BUSTUB_ASSERT</span><span class="p">(</span><span class="n">page_id</span> <span class="o">!=</span> <span class="n">INVALID_PAGE_ID</span><span class="p">,</span> <span class="s">&#34;page_id is invalid&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">itr</span> <span class="o">=</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">itr</span> <span class="o">==</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="p">{</span><span class="c1">// 检查页面表：如果页面不在缓冲池中，返回失败。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">target_id</span> <span class="o">=</span> <span class="n">itr</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">promise</span> <span class="o">=</span> <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">CreatePromise</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">future</span> <span class="o">=</span> <span class="n">promise</span><span class="p">.</span><span class="n">get_future</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 写回磁盘：将页面数据写回磁盘。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">Schedule</span><span class="p">({</span><span class="nb">true</span><span class="p">,</span> <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">data_</span><span class="p">,</span> <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">page_id_</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">promise</span><span class="p">)});</span>
+</span></span><span class="line"><span class="cl">  <span class="n">future</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">is_dirty_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span><span class="c1">// 清除脏标志：清除页面的脏标志。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>3.FlushAllPages</strong>
+将所有有效的缓存页写回磁盘，无视is_dirty_标志</p>
+<p>具体实现和Flush page一样。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// 刷新所有页面
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="n">BufferPoolManager</span><span class="o">::</span><span class="n">FlushAllPages</span><span class="p">()</span><span class="c1">//{}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> <span class="p">{</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="nl">pair</span> <span class="p">:</span> <span class="n">page_table_</span><span class="p">)</span> <span class="p">{</span><span class="c1">// 遍历页面表：将所有页面写回磁盘。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">page_id_t</span> <span class="n">page_id</span> <span class="o">=</span> <span class="n">pair</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">BUSTUB_ASSERT</span><span class="p">(</span><span class="n">page_id</span> <span class="o">!=</span> <span class="n">INVALID_PAGE_ID</span><span class="p">,</span> <span class="s">&#34;page_id is invalid&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">target_id</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">promise</span> <span class="o">=</span> <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">CreatePromise</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">future</span> <span class="o">=</span> <span class="n">promise</span><span class="p">.</span><span class="n">get_future</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">Schedule</span><span class="p">({</span><span class="nb">true</span><span class="p">,</span> <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">data_</span><span class="p">,</span> <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">page_id_</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">promise</span><span class="p">)});</span>
+</span></span><span class="line"><span class="cl">    <span class="n">future</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">is_dirty_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span><span class="c1">// 清除脏标志：清除所有页面的脏标志。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>4.UnpinPage</strong>
+用于减少页在缓冲池中的 pin_count_（引用计数），并标记该页是否脏页（即是否需要在未来写回磁盘）。如果 pin_count_ 变为零，表示该页不再被使用，此时可以将该页标记为可逐出的页，从而允许其被替换。</p>
+<p>其中关键的概念如下：</p>
+<p>pin_count_: 用于跟踪某个页的被引用次数。每个进程调用 FetchPage 时，pin_count_ 增加；调用 UnpinPage 时，pin_count_ 减少。当 pin_count_ 为 0 时，表示该页不再被使用，可以被逐出。</p>
+<p>脏页标记: 如果数据页发生修改，它会被标记为脏页。脏页必须在替换时写回磁盘以防止数据丢失。is_dirty 参数用于指定页面是否已经修改过。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// 解除页面固定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">auto</span> <span class="n">BufferPoolManager</span><span class="o">::</span><span class="n">UnpinPage</span><span class="p">(</span><span class="n">page_id_t</span> <span class="n">page_id</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">is_dirty</span><span class="p">,</span> <span class="na">[[maybe_unused]]</span> <span class="n">AccessType</span> <span class="n">access_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="c1">//{return false;}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">itr</span> <span class="o">=</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">itr</span> <span class="o">==</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">end</span><span class="p">()</span> <span class="o">||</span> <span class="n">pages_</span><span class="p">[</span><span class="n">itr</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">].</span><span class="n">pin_count_</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">((</span><span class="o">--</span><span class="n">pages_</span><span class="p">[</span><span class="n">itr</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">].</span><span class="n">pin_count_</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c1">// 减少固定计数：减少页面的固定计数。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">SetEvictable</span><span class="p">(</span><span class="n">itr</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">is_dirty</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pages_</span><span class="p">[</span><span class="n">itr</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">].</span><span class="n">is_dirty_</span> <span class="o">=</span> <span class="n">is_dirty</span><span class="p">;</span><span class="c1">// 设置脏标志：如果页面被修改，设置脏标志。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>5.NewPage</strong>
+用于为缓冲池分配一个新的页。当需要创建一个新的页时，这个函数负责在缓冲池中找到一个空闲的页框，初始化该页并返回新创建的页</p>
+<p>主要实现流程（其实就是按照.h文件里的注释来）：</p>
+<p>尝试从空闲页列表 free_list_ 中获取页框。
+如果 free_list_ 为空，尝试通过页替换器逐出一个页框。如果需要，先将脏页写回磁盘。
+为新页分配一个新的 page_id。
+初始化新页的内存，更新页表并设置引用计数。
+返回新页指针。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// 新建一个页面，用于之后来存储数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">auto</span> <span class="n">BufferPoolManager</span><span class="o">::</span><span class="n">NewPage</span><span class="p">(</span><span class="n">page_id_t</span> <span class="o">*</span><span class="n">page_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Page</span> <span class="o">*</span> <span class="c1">//{ return nullptr; }
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">frame_id_t</span> <span class="n">replacement_frame_id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">free_list_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span><span class="c1">//如果有空闲框架，直接使用。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">replacement_frame_id</span> <span class="o">=</span> <span class="n">free_list_</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">free_list_</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span><span class="c1">//如果没有空闲框架，使用替换器选择一个框架
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">Evict</span><span class="p">(</span><span class="o">&amp;</span><span class="n">replacement_frame_id</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">page_id</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="o">&amp;</span><span class="n">helper</span> <span class="o">=</span> <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">helper</span><span class="p">.</span><span class="n">IsDirty</span><span class="p">())</span> <span class="p">{</span><span class="c1">// 如果替换的框架包含脏页，将其写回磁盘。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">auto</span> <span class="n">promise</span> <span class="o">=</span> <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">CreatePromise</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="k">auto</span> <span class="n">future</span> <span class="o">=</span> <span class="n">promise</span><span class="p">.</span><span class="n">get_future</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">Schedule</span><span class="p">({</span><span class="nb">true</span><span class="p">,</span> <span class="n">helper</span><span class="p">.</span><span class="n">GetData</span><span class="p">(),</span> <span class="n">helper</span><span class="p">.</span><span class="n">page_id_</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">promise</span><span class="p">)});</span>
+</span></span><span class="line"><span class="cl">      <span class="n">future</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">page_table_</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">helper</span><span class="p">.</span><span class="n">page_id_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 获取一个新的页面ID。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">auto</span> <span class="n">new_page_id</span> <span class="o">=</span> <span class="n">AllocatePage</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">*</span><span class="n">page_id</span> <span class="o">=</span> <span class="n">new_page_id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">//重置框架的内存和元数据。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">ResetMemory</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">pin_count_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">is_dirty_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 将新页面的ID和框架ID插入页面表。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">page_table_</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_pair</span><span class="p">(</span><span class="n">new_page_id</span><span class="p">,</span> <span class="n">replacement_frame_id</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 调用 replacer_-&gt;SetEvictable。设置框架不可替换
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">SetEvictable</span><span class="p">(</span><span class="n">replacement_frame_id</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 记录访问历史
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">RecordAccess</span><span class="p">(</span><span class="n">replacement_frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">pin_count_</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">page_id_</span> <span class="o">=</span> <span class="n">new_page_id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">&amp;</span><span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>6.FetchPage</strong>
+负责从磁盘或其他存储介质中加载特定页面到内存的缓冲池中。该操作通常与页面缓冲管理和数据库查询紧密相关。</p>
+<p><strong>实现流程：</strong></p>
+<p>检查page_table，查看请求的页面是否已在缓冲池中：</p>
+<p>如果找到，增加 pin_count_，返回页面指针</p>
+<p>如果未找到，检查free_list：</p>
+<p>如果有空闲页框frame_id，使用之；</p>
+<p>如果没有，尝试通过页替换器replacer_逐出一个页框。</p>
+<p>从磁盘加载新页面，初始化状态，并更新页表page_table。</p>
+<p>返回新加载页面的指针。</p>
+<p><strong>总结下来有两种情况：</strong>
+(1)先在缓冲池里找这个页面，如果有直接返回就行。
+(2)如果没有，和上面的newpage一样，申请一个新帧。区别在于，newpage放进去的内容是AllocatePage()给的，这个是从磁盘读取的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// 电脑获取页面的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">auto</span> <span class="n">BufferPoolManager</span><span class="o">::</span><span class="n">FetchPage</span><span class="p">(</span><span class="n">page_id_t</span> <span class="n">page_id</span><span class="p">,</span> <span class="na">[[maybe_unused]]</span> <span class="n">AccessType</span> <span class="n">access_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Page</span> <span class="o">*</span> <span class="c1">//{return nullptr;}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 检查页面表：如果页面已在缓冲池中，直接返回。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">!=</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">frame_id</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">SetEvictable</span><span class="p">(</span><span class="n">frame_id</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">RecordAccess</span><span class="p">(</span><span class="n">frame_id</span><span class="p">,</span> <span class="n">access_type</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pages_</span><span class="p">[</span><span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">].</span><span class="n">pin_count_</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="n">pages_</span><span class="p">[</span><span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">//选择替换框架：如果页面不在缓冲池中，选择一个框架。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">frame_id_t</span> <span class="n">replacement_frame_id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">free_list_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">replacement_frame_id</span> <span class="o">=</span> <span class="n">free_list_</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">free_list_</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">Evict</span><span class="p">(</span><span class="o">&amp;</span><span class="n">replacement_frame_id</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="o">&amp;</span><span class="n">helper</span> <span class="o">=</span> <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">helper</span><span class="p">.</span><span class="n">IsDirty</span><span class="p">())</span> <span class="p">{</span><span class="c1">// 处理脏页：如果替换的框架包含脏页，将其写回磁盘。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">auto</span> <span class="n">promise1</span> <span class="o">=</span> <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">CreatePromise</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="k">auto</span> <span class="n">future1</span> <span class="o">=</span> <span class="n">promise1</span><span class="p">.</span><span class="n">get_future</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">Schedule</span><span class="p">({</span><span class="nb">true</span><span class="p">,</span> <span class="n">helper</span><span class="p">.</span><span class="n">data_</span><span class="p">,</span> <span class="n">helper</span><span class="p">.</span><span class="n">page_id_</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">promise1</span><span class="p">)});</span>
+</span></span><span class="line"><span class="cl">      <span class="n">future1</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">page_table_</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">helper</span><span class="p">.</span><span class="n">page_id_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 加载页面：从磁盘加载页面数据到框架。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">ResetMemory</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">pin_count_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">is_dirty_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">promise2</span> <span class="o">=</span> <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">CreatePromise</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">future2</span> <span class="o">=</span> <span class="n">promise2</span><span class="p">.</span><span class="n">get_future</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">disk_scheduler_</span><span class="o">-&gt;</span><span class="n">Schedule</span><span class="p">({</span><span class="nb">false</span><span class="p">,</span> <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">GetData</span><span class="p">(),</span> <span class="n">page_id</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">promise2</span><span class="p">)});</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 更新页面表：将页面的ID和框架ID插入页面表。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">page_table_</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_pair</span><span class="p">(</span><span class="n">page_id</span><span class="p">,</span> <span class="n">replacement_frame_id</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 设置框架不可替换：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">SetEvictable</span><span class="p">(</span><span class="n">replacement_frame_id</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 记录访问历史
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">RecordAccess</span><span class="p">(</span><span class="n">replacement_frame_id</span><span class="p">,</span> <span class="n">access_type</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">pin_count_</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">replacement_frame_id</span><span class="p">].</span><span class="n">page_id_</span> <span class="o">=</span> <span class="n">page_id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">future2</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">pages_</span> <span class="o">+</span> <span class="n">replacement_frame_id</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>7.Delete page</strong>
+用于从内存中的缓冲池和相关数据结构中删除一个特定的页面，涉及到减少或更新与该页面相关的信息，如页表、引脚计数等。</p>
+<p><strong>实现流程：</strong></p>
+<p>查找page_table，确认要删除的页面是否存在：</p>
+<p>如果未找到，返回 false。</p>
+<p>获取对应的帧 ID 和页面指针。</p>
+<p>检查并处理脏页，必要时将其写回磁盘。</p>
+<p>从页表中移除该页面（这里可以直接调用Remove函数），并更新相关状态（如 pin_count_）。</p>
+<p>将帧 ID 添加到空闲列表中，以备后续使用。</p>
+<p>返回 true，表示删除成功。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// 删除页面
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">auto</span> <span class="n">BufferPoolManager</span><span class="o">::</span><span class="n">DeletePage</span><span class="p">(</span><span class="n">page_id_t</span> <span class="n">page_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="c1">//{ return false; }
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">scoped_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">latch_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">==</span> <span class="n">page_table_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="p">{</span><span class="c1">// 检查页面表：如果页面不在缓冲池中，返回成功。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">target_id</span> <span class="o">=</span> <span class="n">iter</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">pin_count_</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span><span class="c1">// 检查固定计数：如果页面被固定，返回失败。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">//  删除页面：从页面表中删除页面，释放框架。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">page_table_</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">replacer_</span><span class="o">-&gt;</span><span class="n">Remove</span><span class="p">(</span><span class="n">target_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">free_list_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">target_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">ResetMemory</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// reset metadata of the page
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 重置页面：重置框架的内存和元数据。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">page_id_</span> <span class="o">=</span> <span class="n">INVALID_PAGE_ID</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">pin_count_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pages_</span><span class="p">[</span><span class="n">target_id</span><span class="p">].</span><span class="n">is_dirty_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 释放页面：调用 DeallocatePage。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">DeallocatePage</span><span class="p">(</span><span class="n">page_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span><span class="c1">//===----------------------------------------------------------------------===//
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>以下是参考的文章：</p>
+<p><a class="link" href="https://zhuanlan.zhihu.com/p/674080359"  target="_blank" rel="noopener"
+    >CMU15445 Fall2023 Project 0-4 通关全记录 - 知乎</a></p>
+<p><a class="link" href="https://zhuanlan.zhihu.com/p/669957163"  target="_blank" rel="noopener"
+    >CMU15-445 Fall 2023 PROJECT #1 - BUFFER POOL - 知乎</a></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_49614712/article/details/142899300"  target="_blank" rel="noopener"
+    >CMU15-445-P1全局思路及详细实现过程（超超超超详细，我奶都能看懂！！！）-CSDN博客</a></p>
+<p><a class="link" href="https://blog.csdn.net/guotianqing/article/details/103770992"  target="_blank" rel="noopener"
+    >c++11多线程编程同步——使用future和promise_c++ future同步超时-CSDN博客</a></p>
+<p><a class="link" href="https://4ever-xxxl.github.io/cmu-15445-project-1/"  target="_blank" rel="noopener"
+    >CMU 15445 Project 1 - xxxl&rsquo;s Blog</a></p>
+<p><a class="link" href="https://blog.csdn.net/AntiO2/article/details/128439155"  target="_blank" rel="noopener"
+    >缓存替换策略：LRU-K算法详解及其C++实现 CMU15-445 Project#1-CSDN博客</a></p>
+<p><a class="link" href="https://blog.csdn.net/qq_40878302/article/details/137079257"  target="_blank" rel="noopener"
+    >CMU15445 2023project1详细过程（上）lru-k替换算法_cmu15445 lru-k-CSDN博客</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 Mar 21, 2025 21:48 &#43;0800
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script
+    src="https://giscus.app/client.js"
+    data-repo="1878247293/1878247293.github.io"
+    data-repo-id="R_kgDONMr1fg"
+    data-category="Announcements"
+    data-category-id="DIC_kwDONMr1fs4CkNCD"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="zh-CN"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+></script>
+<script>
+    function setGiscusTheme(theme) {
+        let giscus = document.querySelector("iframe.giscus-frame");
+        if (giscus) {
+            giscus.contentWindow.postMessage(
+                {
+                    giscus: {
+                        setConfig: {
+                            theme: theme,
+                        },
+                    },
+                },
+                "https://giscus.app"
+            );
+        }
+    }
+
+    (function () {
+        addEventListener("message", (e) => {
+            if (event.origin !== "https://giscus.app") return;
+            handler();
+        });
+        window.addEventListener("onColorSchemeChange", handler);
+
+        function handler() {
+            if (document.documentElement.dataset.scheme === "light") {
+                setGiscusTheme('light');
+            } else {
+                setGiscusTheme('dark_dimmed');
+            }
+        }
+    })();
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 明天再见
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<div id="aplayer"></div>
+
+<script>
+	const home = "https://1878247293.github.io/"
+	const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+	
+    audio: [{
+        name: '天下有情人',
+        artist: '周华健',
+        url: home+'music/天下有情人-周华健/song.mp3',
+        cover: home+'music/天下有情人-周华健/cover.jpg',
+		 
+    },
+	{
+		
+	}]
+});
+</script>
+<style>
+  body {
+    background: url(https://1878247293.github.io/background/7nzi4hch.png) no-repeat center top;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+</style>
+<script src=https://1878247293.github.io/background/sakura.js></script>
+<div id="particles-js"></div>
+
+<script src=https://1878247293.github.io/background/particles.min.js></script>
+<script>
+  particlesJS.load('particles-js', "https://1878247293.github.io/background/particlesjs-config.json", function() {
+    console.log('particles.js loaded - callback');
+  });
+</script>
+
+<style>
+  #particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+  }
+</style>
+
+
+<script>
+const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+const cssPath = "https://1878247293.github.io/waifu/waifu.css"
+const waifujosnPath = "https://1878247293.github.io/waifu/waifu-tips.json"
+const live2dPath = "https://1878247293.github.io/waifu/live2d.min.js"
+
+function loadExternalResource(url, type) {
+	return new Promise((resolve, reject) => {
+		let tag;
+
+		if (type === "css") {
+			tag = document.createElement("link");
+			tag.rel = "stylesheet";
+			tag.href = url;
+		}
+		else if (type === "js") {
+			tag = document.createElement("script");
+			tag.src = url;
+		}
+		if (tag) {
+			tag.onload = () => resolve(url);
+			tag.onerror = () => reject(url);
+			document.head.appendChild(tag);
+		}
+	});
+}
+
+
+if (screen.width >= 768) {
+	Promise.all([
+		loadExternalResource(cssPath, "css"),
+		loadExternalResource(live2dPath, "js"),
+		loadExternalResource(live2d_path + "waifu-tips.js", "js")
+	]).then(() => {
+		
+		initWidget({
+			waifuPath: waifujosnPath,
+			
+			cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+			tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+		});
+		initWaifuMouseEvent();
+	});
+}
+function initWaifuMouseEvent() {
+        const waifu = document.getElementById("waifu");
+        let isDown = false;
+        let waifuLeft;
+        let mouseLeft;
+        let waifuTop;
+        let mouseTop;
+        
+        waifu.onmousedown = function (e) {
+            isDown = true;
+            
+            waifuLeft = waifu.offsetLeft;
+            mouseLeft = e.clientX;
+            
+            waifuTop = waifu.offsetTop;
+            mouseTop = e.clientY;
+        }
+        
+        window.onmousemove = function (e) {
+            if (!isDown) {
+                return;
+            }
+            
+            let currentLeft = waifuLeft + (e.clientX - mouseLeft);
+            if (currentLeft < 0) {
+                currentLeft = 0;
+            } else if (currentLeft > window.innerWidth - 300) {
+                currentLeft = window.innerWidth - 300;
+            }
+            waifu.style.left = currentLeft  + "px";
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+        
+        window.onmouseup = function (e) {
+            isDown = false;
+        }
+    }
+</script>
+
+
+
+
+
+    </body>
+</html>
